@@ -1,23 +1,23 @@
-defmodule Waller.Auth do
+defmodule Waller.Participants do
   @moduledoc """
-  The Auth context.
+  The Participants context.
   """
 
   import Ecto.Query, warn: false
   alias Waller.Repo
 
-  alias Waller.Auth.User
+  alias Waller.Participants.User
 
   @doc """
-  Returns the list of users.
+  Returns the list of user.
 
   ## Examples
 
-      iex> list_users()
+      iex> list_user()
       [%User{}, ...]
 
   """
-  def list_users do
+  def list_user do
     Repo.all(User)
   end
 
