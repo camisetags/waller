@@ -7,5 +7,13 @@ defmodule WallerWeb.Router do
 
   scope "/api", WallerWeb do
     pipe_through :api
+
+    resources "/users", UserController
+  end
+
+  scope "", WallerWeb do
+    pipe_through :api
+
+    get "", RootController, :index
   end
 end

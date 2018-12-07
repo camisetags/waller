@@ -3,9 +3,12 @@ defmodule Waller.Participants.User do
   import Ecto.Changeset
 
 
-  schema "user" do
+  schema "users" do
     field :age, :integer
     field :name, :string
+    field :photo, :string
+
+    many_to_many :walls, Waller.Walls.Wall, join_through: Waller.Walls.UserWall
 
     timestamps()
   end
