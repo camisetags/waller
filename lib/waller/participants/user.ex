@@ -15,8 +15,10 @@ defmodule Waller.Participants.User do
 
   @doc false
   def changeset(user, attrs) do
+    user_fields = [:name, :age, :photo]
+
     user
-    |> cast(attrs, [:name, :age])
-    |> validate_required([:name, :age])
+    |> cast(attrs, user_fields)
+    |> validate_required(user_fields)
   end
 end
