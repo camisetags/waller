@@ -9,6 +9,7 @@ defmodule WallerWeb.Router do
     pipe_through :api
 
     resources "/users", UserController
+    post "/walls", WallsController, :create
   end
 
   scope "", WallerWeb do
