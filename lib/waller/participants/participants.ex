@@ -21,6 +21,12 @@ defmodule Waller.Participants do
     Repo.all(User)
   end
 
+  def list_user_in(ids) do
+    User
+    |> where([u], u.id in ^ids)
+    |> Repo.all
+  end
+
   @doc """
   Gets a single user.
 

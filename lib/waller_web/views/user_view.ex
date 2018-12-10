@@ -11,8 +11,11 @@ defmodule WallerWeb.UserView do
   end
 
   def render("user.json", %{user: user}) do
-    %{id: user.id,
+    %{
+      id: user.id,
       name: user.name,
-      age: user.age}
+      age: user.age,
+      photo: user.photo
+    }
   end
 end
