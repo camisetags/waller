@@ -17,4 +17,7 @@ defmodule Waller.Walls.Wall do
     |> cast(attrs, [:number])
     |> validate_required([:number])
   end
+
+  def form_wall_changeset() do
+  end
 end
