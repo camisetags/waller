@@ -8,7 +8,11 @@ defmodule Waller.Participants.User do
     field :name, :string
     field :photo, :string
 
-    many_to_many :walls, Waller.Walls.Wall, join_through: Waller.Walls.UserWall
+    many_to_many(
+      :walls, 
+      Waller.Walls.Wall, 
+      join_through: Waller.Walls.UserWall
+    )
 
     timestamps()
   end

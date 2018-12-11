@@ -1,29 +1,41 @@
 defmodule WallerWeb.WallsController do
   use WallerWeb, :controller
   # require IEx
-
   alias Waller.Participants
   alias Waller.Participants.User
   
-  # alias Waller.Walls
-  # alias Waller.Walls.Wall
+  alias Waller.Walls
+  alias Waller.Walls.Wall
 
   action_fallback WallerWeb.FallbackController
 
-  def create(conn, %{"user_ids" => params}) do
-    users = Participants.list_user_in(params)
+  def create(conn, %{"user_ids" => params, "result_date" => result}) do
+    Participants.list_user_in(params)
+    |> form_wall(result, conn)
+  end
 
-    case Participants.list_user_in(params) do
-      { :ok, users } -> conn |> form_wall(%{content: users}) 
-      { :error, error } -> conn |> json(%{error: error})
+  defp form_wall(wall_users, result, conn) when length(wall_users) < 2 do
+    conn 
+    |> put_status(:unprocessable_entity)
+    |> json(%{error: "You need at least 2 participants to form a wall"})
+  end
+  
+  defp form_wall(wall_users, result, conn) do
+    wall = %{
+      running: true,
+      result_date: Date.from_iso8601!(result), 
+      users: wall_users,
+    }
+
+    case Walls.form_wall(wall) do
+      {:ok, created_wall} -> 
+        conn
+        |> put_status(:created)
+        |> render("show.json", wall: created_wall)
+      {:error, error} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{error: ["Cannot create wall"]})
     end
-  end
-
-  defp form_wall(conn, wall_users) when length(wall_users) < 2 do
-    conn |> json(%{error: "You need at least 2 participants to form a wall"})
-  end
-
-  defp form_wall(conn, wall_users) do
-
   end
 end

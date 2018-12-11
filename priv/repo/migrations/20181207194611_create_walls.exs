@@ -3,7 +3,8 @@ defmodule Waller.Repo.Migrations.CreateWalls do
 
   def change do
     create table(:walls) do
-      add :number, :integer
+      add :running, :boolean
+      add :result_date, :date
 
       timestamps()
     end

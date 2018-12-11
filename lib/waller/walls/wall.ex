@@ -4,20 +4,19 @@ defmodule Waller.Walls.Wall do
 
 
   schema "walls" do
-    field :number, :integer
+    field :running, :boolean
+    field :result_date, :date
 
-    many_to_many :users, Waller.Participants.User, join_through: Waller.Participants.User
+    many_to_many :users, Waller.Participants.User, join_through: Waller.Walls.UserWall
 
     timestamps()
   end
 
   @doc false
   def changeset(wall, attrs) do
+    fields = [:running, :result_date]
     wall
-    |> cast(attrs, [:number])
-    |> validate_required([:number])
-  end
-
-  def form_wall_changeset() do
+    |> cast(attrs, fields)
+    |> validate_required(fields)
   end
 end
