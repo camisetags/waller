@@ -15,7 +15,7 @@ defmodule Waller.Walls.UserWall do
   @doc false
   def changeset(user_wall, attrs) do
     user_wall
-    |> cast(attrs, [])
-    |> validate_required([])
+    |> cast(attrs, [:votes])
+    |> validate_required([:votes])
   end
 end
