@@ -10,6 +10,8 @@ defmodule Waller.Walls do
   alias Waller.Walls.UserWall
   # alias Waller.Participants.User
 
+  def get_wall!(id), do: Repo.get!(Wall, id)
+
   def form_wall(wall_params \\ %{}, wall_users) do
     %Wall{}
     |> Wall.changeset(wall_params)
@@ -24,6 +26,12 @@ defmodule Waller.Walls do
       [{user_wall, wall}] -> compute_vote({user_wall, wall})
       [] -> {:error, ["This wall or participant does not exists."]}
     end
+  end
+
+  def close_wal(wall_id) do
+    get_wall(wall_id)
+    |> Wall.changeset(%{ running: false })
+    |> Repo.update
   end
 
   defp put_user(changeset, user_list) do
