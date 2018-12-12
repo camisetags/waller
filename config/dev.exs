@@ -49,8 +49,9 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Configure your database
 config :waller, Waller.Repo,
-  username: System.get_env("PGUSER"),
-  password: System.get_env("PGPASSWORD"),
-  database: System.get_env("PGDATABASE"),
-  hostname: System.get_env("PGHOST"),
+  username: System.get_env("PGUSER") || "postgres",
+  password: System.get_env("PGPASSWORD") || "postgres",
+  database: System.get_env("PGDATABASE") || "database_name",
+  hostname: System.get_env("PGHOST") || "localhost",
+  port: System.get_env("PGPORT") || 54322,
   pool_size: 10

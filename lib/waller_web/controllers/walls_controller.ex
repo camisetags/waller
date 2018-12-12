@@ -1,12 +1,13 @@
 defmodule WallerWeb.WallsController do
   use WallerWeb, :controller
   # require IEx
+  # import Ecto.Query, warn: false
   alias Ecto
   alias Waller.Participants
-  alias Waller.Participants.User
+  # alias Waller.Participants.User
   
   alias Waller.Walls
-  alias Waller.Walls.Wall
+  # alias Waller.Walls.Wall
 
   action_fallback WallerWeb.FallbackController
 
@@ -15,7 +16,20 @@ defmodule WallerWeb.WallsController do
     |> form_wall(result, conn)
   end
 
-  defp form_wall(wall_users, result, conn) when length(wall_users) < 2 do
+  def vote(conn, %{ "wall_id" => wall_id, "user_id" => user_id }) do
+    case Walls.send_vote(%{wall_id: wall_id, user_id: user_id}) do
+      {:ok, value} ->
+        conn 
+        |> put_status(:ok)
+        |> json(%{message: "Your vote was computed!"})
+      {:error, changeset} ->
+        conn 
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: changeset})
+    end
+  end
+
+  defp form_wall(wall_users, _, conn) when length(wall_users) < 2 do
     conn 
     |> put_status(:unprocessable_entity)
     |> json(%{error: "You need at least 2 participants to form a wall"})
@@ -32,12 +46,10 @@ defmodule WallerWeb.WallsController do
   defp create_new_wall(conn, wall, wall_users) do
     case Walls.form_wall(wall, wall_users) do
       {:ok, created_wall} -> 
-        # IO.inspect created_wall
         conn
         |> put_status(:created)
         |> render("show.json", wall: created_wall)
-      {:error, %Ecto.Changeset{} = error} ->
-        # IO.inspect error
+      {:error, %Ecto.Changeset{} = _} ->
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{error: ["Cannot create wall"]})

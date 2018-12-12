@@ -10,6 +10,7 @@ defmodule WallerWeb.Router do
 
     resources "/users", UserController
     post "/walls", WallsController, :create
+    post "/walls/send-vote/:wall_id/to/:user_id", WallsController, :vote
   end
 
   scope "", WallerWeb do

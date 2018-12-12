@@ -7,7 +7,7 @@ defmodule Waller.Walls.UserWall do
     field :user_id, :id
     field :wall_id, :id
 
-    field :votes, :integer
+    field :votes, :integer, default: 0
 
     timestamps()
   end
