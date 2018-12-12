@@ -1,6 +1,7 @@
 defmodule WallerWeb.WallsController do
   use WallerWeb, :controller
   # require IEx
+  alias Ecto
   alias Waller.Participants
   alias Waller.Participants.User
   
@@ -23,16 +24,20 @@ defmodule WallerWeb.WallsController do
   defp form_wall(wall_users, result, conn) do
     wall = %{
       running: true,
-      result_date: Date.from_iso8601!(result), 
-      users: wall_users,
+      result_date: Date.from_iso8601!(result)
     }
+    create_new_wall(conn, wall, wall_users)
+  end
 
-    case Walls.form_wall(wall) do
+  defp create_new_wall(conn, wall, wall_users) do
+    case Walls.form_wall(wall, wall_users) do
       {:ok, created_wall} -> 
+        # IO.inspect created_wall
         conn
         |> put_status(:created)
         |> render("show.json", wall: created_wall)
-      {:error, error} ->
+      {:error, %Ecto.Changeset{} = error} ->
+        # IO.inspect error
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{error: ["Cannot create wall"]})

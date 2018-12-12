@@ -3,24 +3,21 @@ defmodule Waller.Walls do
   The Participants context.
   """
 
-  import Ecto.Query, warn: false
+  # import Ecto.Query, warn: false
+  alias Ecto
   alias Waller.Repo
 
   alias Waller.Walls.Wall
   alias Waller.Participants.User
 
-  def form_wall(wall_params) do
-    # users = User.changeset(%User{}, users_params)
-    # Ecto.Changeset.put_assoc(wall, :users, users)
-    # |> Repo.insert
-    
-    wall = Wall.changeset(%Wall{}, wall_params)
-    wall = Repo.preload(wall, :users)
-    users = wall.users |> Enum.map(&Ecto.Changeset.change/1)
+  def form_wall(wall_params \\ %{}, wall_users) do
+    %Wall{}
+    |> Wall.changeset(wall_params)
+    |> put_user(wall_users)
+    |> Repo.insert
+  end
 
-    wall
-    |> Ecto.Changeset.change
-    |> Ecto.Changeset.put_assoc(:users, users)
-    |> Repo.insert()
+  defp put_user(changeset, user_list) do
+    Ecto.Changeset.put_assoc(changeset, :users, user_list) 
   end
 end

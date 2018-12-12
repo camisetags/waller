@@ -16,12 +16,11 @@ defmodule WallerWeb.WallsView do
   end
 
   def render("wall.json", %{wall: wall}) do
-    # IO.inspect wall
     %{
       id: wall.id,
       running: wall.running,
       result_date: wall.result_date,
-      users: render_many(wall.users, __MODULE__, "wall_user.json")
+      users: render_many(wall.users, __MODULE__, "wall_user.json", as: :wall_user)
     }
   end
 
