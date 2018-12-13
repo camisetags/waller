@@ -2,7 +2,7 @@ defmodule Waller.Participants.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-
+  @derive {Poison.Encoder, except: [:__meta__]}
   schema "users" do
     field :age, :integer
     field :name, :string

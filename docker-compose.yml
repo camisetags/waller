@@ -15,7 +15,7 @@ services:
       - 54322:5432
 
   phoenix:
-    image: elixir:1.6.6-alpine
+    image: elixir:1.7.4-alpine
     environment:
       PGUSER: postgres
       PGPASSWORD: postgres

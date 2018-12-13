@@ -2,7 +2,7 @@ defmodule Waller.Walls do
   @moduledoc """
   The Walls context.
   """
-  import Enum, only: [map: 2, find: 3]
+  import Enum, only: [map: 2]
   import Ecto.Query, warn: false
   alias Ecto.Changeset
   

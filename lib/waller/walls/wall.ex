@@ -2,7 +2,7 @@ defmodule Waller.Walls.Wall do
   use Ecto.Schema
   import Ecto.Changeset
 
-
+  @derive {Poison.Encoder, except: [:__meta__]}
   schema "walls" do
     field :running, :boolean
     field :result_date, :date
