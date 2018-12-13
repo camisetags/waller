@@ -1,7 +1,6 @@
 defmodule WallerWeb.WallsView do
   use WallerWeb, :view
-  # alias WallerWeb.WallsView
-  # alias Waller.Participants.User
+  import Enum, only: [map: 2]
 
   def render("index.json", %{wall: wall}) do
     %{data: render_many(wall, __MODULE__, "wall.json")}
