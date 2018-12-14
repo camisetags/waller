@@ -24,6 +24,7 @@ defmodule WallerWeb do
       import Plug.Conn
       import WallerWeb.Gettext
       alias WallerWeb.Router.Helpers, as: Routes
+      alias Waller.RedixPool, as: Redix
     end
   end
 

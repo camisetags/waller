@@ -2,6 +2,7 @@ version: '3.2'
 
 services:
   database:
+    container_name: database
     image: postgres:10.4
     environment:
       POSTGRES_USER: 'postgres'
@@ -15,6 +16,7 @@ services:
       - 54322:5432
 
   phoenix:
+    container_name: phoenix
     image: elixir:1.7.4-alpine
     environment:
       PGUSER: postgres
@@ -30,6 +32,13 @@ services:
     working_dir: /app
     depends_on:
       - database
+      - redis
+
+  redis:
+    container_name: redis
+    image: redis:5.0.3
+    ports:
+      - 6379:6379
   # phoenix:
   #   build: .
   #   environment:

@@ -55,3 +55,12 @@ config :waller, Waller.Repo,
   hostname: System.get_env("PGHOST") || "localhost",
   port: System.get_env("PGPORT") || 54322,
   pool_size: 10
+
+
+config :waller, Waller.Endpoint,
+  pubsub: [
+    adapter: Phoenix.PubSub.Redis,
+    host: System.get_env("REDIS_HOST") || "localhost", 
+    node_name: System.get_env("NODE") || "waller",
+    port: 6932
+  ]

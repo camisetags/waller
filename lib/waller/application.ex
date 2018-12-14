@@ -14,6 +14,7 @@ defmodule Waller.Application do
       WallerWeb.Endpoint
       # Starts a worker by calling: Waller.Worker.start_link(arg)
       # {Waller.Worker, arg},
+      Waller.RedixPool
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

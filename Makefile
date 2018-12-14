@@ -9,9 +9,9 @@ ecto.setup:
 
 build:
 	make deps.get
-	mix deps.compile
+	docker-compose exec phoenix mix deps.compile
 	make ecto.setup
-	mix compile
+	docker-compose exec phoenix mix compile
 
 server:
 	docker-compose exec phoenix mix phx.server
