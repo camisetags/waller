@@ -21,7 +21,7 @@ defmodule Waller.MixProject do
   def application do
     [
       mod: {Waller.Application, []},
-      extra_applications: [:logger, :runtime_tools, :phoenix_pubsub_redis]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
@@ -43,7 +43,9 @@ defmodule Waller.MixProject do
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
       {:poison, "~> 3.1"},
-      {:phoenix_pubsub_redis, "~> 2.1.0"}
+      {:redix, "~> 0.8.2"},
+      {:poolboy, "~> 1.5.1"}
+      # {:phoenix_pubsub_redis, "~> 2.1.0"}
     ]
   end
 

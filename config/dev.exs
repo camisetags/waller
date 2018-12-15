@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
 config :waller, WallerWeb.Endpoint,
-  http: [port: 4000],
+  http: [port: 4001],
   debug_errors: true,
   code_reloader: true,
   check_origin: true,
@@ -57,10 +57,7 @@ config :waller, Waller.Repo,
   pool_size: 10
 
 
-config :waller, Waller.Endpoint,
-  pubsub: [
-    adapter: Phoenix.PubSub.Redis,
-    host: System.get_env("REDIS_HOST") || "localhost", 
-    node_name: System.get_env("NODE") || "waller",
-    port: 6932
-  ]
+config :waller, Waller.RedixPool,
+  host: System.get_env("REDIS_HOST") || "localhost",
+  port: System.get_env("REDIS_PORT") || 6932,
+  cache_time: System.get_env("REDIS_CACHE_TIME") || 10 * 60

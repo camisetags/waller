@@ -8,6 +8,7 @@ defmodule WallerWeb.WallsController do
 
   alias Waller.Walls
   alias Waller.Walls.Wall
+  alias Waller.Walls.CacheLayer
 
   action_fallback WallerWeb.FallbackController
 
@@ -17,7 +18,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def vote(conn, %{"wall_id" => wall_id, "user_id" => user_id}) do
-    case Walls.send_vote(%{wall_id: wall_id, user_id: user_id}) do
+    case CacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
       {:ok, _} ->
         conn
         |> put_status(:ok)
@@ -45,11 +46,12 @@ defmodule WallerWeb.WallsController do
   end
 
   def status(conn, %{"wall_id" => wall_id}) do
-    case Walls.status(wall_id) do
+    case CacheLayer.status(wall_id) do
       %Wall{} = wall ->
         conn
         |> put_status(:ok)
         |> json(%{data: wall})
+
       {:error, _} ->
         conn
         |> put_status(:internal_server_error)
@@ -84,5 +86,27 @@ defmodule WallerWeb.WallsController do
         |> put_status(:unprocessable_entity)
         |> json(%{error: ["Cannot create wall"]})
     end
+  end
+
+  defp status_from_cache(conn) do
+    case RedixPool.command(["GET", conn.request_path]) do
+      {:ok, value} -> value
+      {:error, value} -> 
+    end
+  end
+
+  defp mem_votes_key(user_id, wall_id) do
+    "mem_vote_#{user_id}_#{wall_id}"
+  end
+
+  defp get_votes_from_cache(user_id, wall_id) do
+    case RedixPool.commad("GET", mem_votes_key(user_id, wall_id)) do
+      {:ok, value} -> Integer.parse(value)
+      {:error, _} -> 0
+    end
+  end
+
+  defp compute_votes_from_cache(user_id, wall_id) do
+    votes = get_votes_from_cache(user_id, wall_id)
   end
 end

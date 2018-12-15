@@ -1,10 +1,11 @@
 defmodule Waller.RedixPool do
   use Supervisor
 
-  @redis_connection_params host: "localhost"
+  # @redis_connection_params host: Application.get_env(:waller, :host)
+  @redis_connection_params host: System.get_env("REDIS_HOST") || "localhost"
 
-  def start_link do
-    Supervisor.start_link(__MODULE__, [])
+  def start_link(initial_val) do
+    Supervisor.start_link(__MODULE__, initial_val)
   end
 
   def init([]) do

@@ -16,9 +16,9 @@ defmodule WallerWeb.Router do
     get "/walls/status/:wall_id", WallsController, :status
   end
 
-  scope "", WallerWeb do
+  scope "/", WallerWeb do
     pipe_through :api
 
-    get "", RootController, :index
+    get "/", RootController, :index
   end
 end

@@ -11,7 +11,7 @@ defmodule Waller.Application do
       # Start the Ecto repository
       Waller.Repo,
       # Start the endpoint when the application starts
-      WallerWeb.Endpoint
+      WallerWeb.Endpoint,
       # Starts a worker by calling: Waller.Worker.start_link(arg)
       # {Waller.Worker, arg},
       Waller.RedixPool
