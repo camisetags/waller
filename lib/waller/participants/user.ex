@@ -7,6 +7,7 @@ defmodule Waller.Participants.User do
     field :age, :integer
     field :name, :string
     field :photo, :string
+    field :votes, :integer, virtual: true
 
     many_to_many(
       :walls, 

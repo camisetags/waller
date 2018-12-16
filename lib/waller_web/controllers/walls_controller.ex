@@ -6,7 +6,7 @@ defmodule WallerWeb.WallsController do
 
   alias Waller.Walls
   alias Waller.Walls.Wall
-  alias Waller.Walls.CacheLayer
+  alias Waller.Walls.CacheLayer, as: WallsCacheLayer
 
   action_fallback WallerWeb.FallbackController
 
@@ -16,7 +16,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def vote(conn, %{"wall_id" => wall_id, "user_id" => user_id}) do
-    case CacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
+    case WallsCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
       {:ok, _} ->
         conn
         |> put_status(:ok)
@@ -44,7 +44,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def status(conn, %{"wall_id" => wall_id}) do
-    case CacheLayer.status(wall_id) do
+    case WallsCacheLayer.status(wall_id) do
       %Wall{} = wall ->
         conn
         |> put_status(:ok)

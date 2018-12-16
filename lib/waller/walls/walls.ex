@@ -69,7 +69,7 @@ defmodule Waller.Walls do
       running: wall.running,
       result_date: wall.result_date,
       users: query_result |> map(fn result -> 
-        %{
+        %User{
           id: result.user.id, 
           name: result.user.name,
           photo: result.user.photo,
