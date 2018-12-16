@@ -15,4 +15,5 @@ config :waller, Waller.Repo,
   password: "postgres",
   database: "waller_test",
   hostname: "localhost",
+  port: 54322,
   pool: Ecto.Adapters.SQL.Sandbox

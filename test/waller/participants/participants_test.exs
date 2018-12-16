@@ -6,8 +6,8 @@ defmodule Waller.ParticipantsTest do
   describe "user" do
     alias Waller.Participants.User
 
-    @valid_attrs %{age: 42, name: "some name"}
-    @update_attrs %{age: 43, name: "some updated name"}
+    @valid_attrs %{age: 42, name: "some name", photo: "image.png"}
+    @update_attrs %{age: 43, name: "some updated name", photo: "image.png"}
     @invalid_attrs %{age: nil, name: nil}
 
     def user_fixture(attrs \\ %{}) do
