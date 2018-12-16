@@ -2,21 +2,21 @@ defmodule WallerWeb.WallsController do
   use WallerWeb, :controller
 
   alias Ecto
-  alias Waller.Participants
+  alias Waller.User.Repo, as: UserRepo
 
-  alias Waller.Walls
-  alias Waller.Walls.Wall
-  alias Waller.Walls.CacheLayer, as: WallsCacheLayer
+  alias Waller.Wall.Repo, as: WallRepo
+  alias Waller.Wall.Model, as: Wall
+  alias Waller.Wall.CacheLayer, as: WallCacheLayer
 
   action_fallback WallerWeb.FallbackController
 
   def create(conn, %{"user_ids" => params, "result_date" => result}) do
-    Participants.list_user_in(params)
+    UserRepo.list_user_in(params)
     |> form_wall(result, conn)
   end
 
   def vote(conn, %{"wall_id" => wall_id, "user_id" => user_id}) do
-    case WallsCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
+    case WallCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
       {:ok, _} ->
         conn
         |> put_status(:ok)
@@ -30,7 +30,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def close(conn, %{"wall_id" => wall_id}) do
-    case Walls.close_wall(wall_id) do
+    case WallRepo.close_wall(wall_id) do
       {:ok, _} ->
         conn
         |> put_status(:ok)
@@ -44,7 +44,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def status(conn, %{"wall_id" => wall_id}) do
-    case WallsCacheLayer.status(wall_id) do
+    case WallCacheLayer.status(wall_id) do
       %Wall{} = wall ->
         conn
         |> put_status(:ok)
@@ -73,7 +73,7 @@ defmodule WallerWeb.WallsController do
   end
 
   defp create_new_wall(conn, wall, wall_users) do
-    case Walls.form_wall(wall, wall_users) do
+    case WallRepo.form_wall(wall, wall_users) do
       {:ok, created_wall} ->
         conn
         |> put_status(:created)

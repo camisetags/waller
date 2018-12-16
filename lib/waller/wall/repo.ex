@@ -1,4 +1,4 @@
-defmodule Waller.Walls do
+defmodule Waller.Wall.Repo do
   @moduledoc """
   The Walls context.
   """
@@ -7,9 +7,9 @@ defmodule Waller.Walls do
   alias Ecto.Changeset
   
   alias Waller.Repo
-  alias Waller.Walls.Wall
-  alias Waller.Walls.UserWall
-  alias Waller.Participants.User
+  alias Waller.Wall.Model, as: Wall
+  alias Waller.Wall.UserWall
+  alias Waller.User.Model, as: User
 
   @votes_count_size 50
 
@@ -93,12 +93,12 @@ defmodule Waller.Walls do
   end
 end
 
-defmodule Waller.Walls.CacheLayer do
+defmodule Waller.Wall.CacheLayer do
   import Enum, only: [map: 2]
 
-  alias Waller.Walls
+  alias Waller.Wall.Repo, as: WallRepo
   alias Waller.RedixPool
-  alias Waller.Walls.Wall
+  alias Waller.Wall.Model, as: Wall
 
   @votes_count_size 90
   @cache_time 5 * 60
@@ -106,7 +106,7 @@ defmodule Waller.Walls.CacheLayer do
   def status(wall_id) do
     case RedixPool.command(["GET", "status_#{wall_id}"]) do
       {:ok, nil} -> 
-        Walls.status(wall_id) 
+        WallRepo.status(wall_id) 
         |> set_status_cache()
         |> sum_votes_mem_with_cache()
 
@@ -127,7 +127,9 @@ defmodule Waller.Walls.CacheLayer do
     if votes_count === @votes_count_size do
       set_mem_votes(cache_key, 0)
       RedixPool.command(["DEL", "status_#{wall_id}"])
-      {:ok, Walls.send_vote(%{wall_id: wall_id, user_id: user_id}, votes_count)}
+      {:ok, WallRepo.send_vote(
+        %{wall_id: wall_id, user_id: user_id}, votes_count
+      )}
     else
       set_mem_votes(cache_key, votes_count)
     end

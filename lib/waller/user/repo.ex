@@ -6,7 +6,7 @@ defmodule Waller.User.Repo do
   import Ecto.Query, warn: false
   alias Waller.Repo, as: GenericRepo
 
-  alias Waller.User.Model
+  alias Waller.User.Model, as: User
 
   @doc """
   Returns the list of user.
