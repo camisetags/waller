@@ -1,4 +1,4 @@
-defmodule Waller.Participants.User do
+defmodule Waller.User.Model do
   use Ecto.Schema
   import Ecto.Changeset
 

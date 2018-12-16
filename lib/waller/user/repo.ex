@@ -1,12 +1,12 @@
-defmodule Waller.Participants do
+defmodule Waller.User.Repo do
   @moduledoc """
   The Participants context.
   """
 
   import Ecto.Query, warn: false
-  alias Waller.Repo
+  alias Waller.Repo, as: GenericRepo
 
-  alias Waller.Participants.User
+  alias Waller.User.Model
 
   @doc """
   Returns the list of user.
@@ -18,13 +18,13 @@ defmodule Waller.Participants do
 
   """
   def list_user do
-    Repo.all(User)
+    GenericRepo.all(User)
   end
 
   def list_user_in(ids) do
     User
     |> where([u], u.id in ^ids)
-    |> Repo.all
+    |> GenericRepo.all
   end
 
   @doc """
@@ -41,7 +41,7 @@ defmodule Waller.Participants do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user!(id), do: GenericRepo.get!(User, id)
 
   @doc """
   Creates a user.
@@ -58,7 +58,7 @@ defmodule Waller.Participants do
   def create_user(attrs \\ %{}) do
     %User{}
     |> User.changeset(attrs)
-    |> Repo.insert()
+    |> GenericRepo.insert()
   end
 
   @doc """
@@ -76,7 +76,7 @@ defmodule Waller.Participants do
   def update_user(%User{} = user, attrs) do
     user
     |> User.changeset(attrs)
-    |> Repo.update()
+    |> GenericRepo.update()
   end
 
   @doc """
@@ -92,7 +92,7 @@ defmodule Waller.Participants do
 
   """
   def delete_user(%User{} = user) do
-    Repo.delete(user)
+    GenericRepo.delete(user)
   end
 
   @doc """
