@@ -1,10 +1,8 @@
 defmodule WallerWeb.WallsController do
   use WallerWeb, :controller
-  # require IEx
-  # import Ecto.Query, warn: false
+
   alias Ecto
   alias Waller.Participants
-  # alias Waller.Participants.User
 
   alias Waller.Walls
   alias Waller.Walls.Wall
@@ -86,27 +84,5 @@ defmodule WallerWeb.WallsController do
         |> put_status(:unprocessable_entity)
         |> json(%{error: ["Cannot create wall"]})
     end
-  end
-
-  defp status_from_cache(conn) do
-    case RedixPool.command(["GET", conn.request_path]) do
-      {:ok, value} -> value
-      {:error, value} -> 
-    end
-  end
-
-  defp mem_votes_key(user_id, wall_id) do
-    "mem_vote_#{user_id}_#{wall_id}"
-  end
-
-  defp get_votes_from_cache(user_id, wall_id) do
-    case RedixPool.commad("GET", mem_votes_key(user_id, wall_id)) do
-      {:ok, value} -> Integer.parse(value)
-      {:error, _} -> 0
-    end
-  end
-
-  defp compute_votes_from_cache(user_id, wall_id) do
-    votes = get_votes_from_cache(user_id, wall_id)
   end
 end

@@ -100,7 +100,7 @@ defmodule Waller.Walls.CacheLayer do
   alias Waller.RedixPool
   alias Waller.Walls.Wall
 
-  @votes_count_size 50
+  @votes_count_size 90
   @cache_time 5 * 60
 
   def status(wall_id) do
