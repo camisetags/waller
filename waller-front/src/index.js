@@ -8,8 +8,8 @@ import WallPage from './pages/WallPage';
 const Routes = () => (
     <Router>
       <div>
-        <Route path="/" component={ WelcomePage } />
-        <Route path="/wall/:wall" component={WallPage} />
+        <Route path="/" component={WelcomePage} />
+        <Route path="/big-wall" component={WallPage} />
       </div>
     </Router>
 );

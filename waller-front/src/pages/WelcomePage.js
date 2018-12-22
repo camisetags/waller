@@ -17,7 +17,7 @@ const WelcomePage = () => (
       <Jumbotron style={style}>
         <h1>Bem vindo ao paredão do big brother Brasil!</h1>
         <hr />
-        <Link to="/wall/1">
+        <Link to="/wall">
           <Button color="primary">Ir para o paredão</Button>
         </Link>
       </Jumbotron>
