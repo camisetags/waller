@@ -4,7 +4,6 @@ import { Col, Row, Button } from 'reactstrap';
 import wallService from '../services/wall';
 
 import Layout from '../components/Main';
-import UserImage from '../components/UserImage';
 import HeaderTitle from '../components/HeaderTitle';
 import UserSelector from '../components/UserSelector';
 
