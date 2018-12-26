@@ -2,7 +2,7 @@ defmodule WallerWeb.Router do
   use WallerWeb, :router
 
   pipeline :api do
-    plug CORSPlug, origin: "*"
+    plug CORSPlug
     plug :accepts, ["json"]
   end
 
@@ -15,6 +15,7 @@ defmodule WallerWeb.Router do
     post "/walls/vote/:wall_id/to/:user_id", WallsController, :vote
     post "/walls/close/:wall_id", WallsController, :close
     get "/walls/status/:wall_id", WallsController, :status
+    options "/walls/status/:wall_id", WallsController, :options
   end
 
   scope "/", WallerWeb do

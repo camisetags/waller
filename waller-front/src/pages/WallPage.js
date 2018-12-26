@@ -1,41 +1,61 @@
 import React from 'react';
-import { Jumbotron, Col, Row } from 'reactstrap'
-import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { Col, Row, Button } from 'reactstrap';
+import wallService from '../services/wall';
 
-const service = {
-  async getWall() {
-    return axios.get('http://localhost:4000/api/walls/status/1')
-      .then(response => response.data);
-  }
-};
+import Layout from '../components/Main';
+import UserImage from '../components/UserImage';
+import HeaderTitle from '../components/HeaderTitle';
 
 class WallPage extends React.Component {
   state = {
-    users: [],
+    name: 'test',
+    users: []
   };
 
   componentDidMount() {
-    service.getWall()
-      .then((response) => {
-        this.setState({
-          users: response.users
-        })
+    wallService.getWall(1).then(data => {
+      this.setState({
+        users: data.data.users
       });
+    });
   }
 
   render() {
+    const divStyle = {
+      display: 'grid'
+    };
+
+    const buttonStyle = {
+      alignSelf: 'center',
+      justifySelf: 'center'
+    };
     return (
-      <div>
-        <Jumbotron>
-          <Row>
-            {this.state.users.slice(0, 2).map(user => (
-              <Col>
-                {user.name}
-              </Col>
-            ))}
-          </Row>
-        </Jumbotron>        
-      </div>
+      <Layout>
+        <Link to={'/'}>
+          <Button color="primary">Voltar</Button>
+        </Link>
+        <HeaderTitle>Quem deve ser eliminado?</HeaderTitle>
+        <hr />
+        <Row>
+          {this.state.users.slice(0, 2).map((user, index) => (
+            <Col key={user.id}>
+              <b>{user.name}</b>
+              <UserImage src={user.photo} />
+              <div>
+                Para eliminar o participante {user.name} ligue para o telefone
+                0800-123-00{index + 1} ou mande um SMS para 0800{index + 1}
+              </div>
+            </Col>
+          ))}
+        </Row>
+        <hr />
+        <div style={divStyle}>
+          <Button style={buttonStyle} color="primary">
+            Envie seu voto agora
+          </Button>
+        </div>
+      </Layout>
     );
   }
 }

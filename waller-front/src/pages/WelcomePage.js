@@ -1,28 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Jumbotron, Container, Button } from 'reactstrap';
-
-const style = {
-  boxShadow: "0px 0px 2px",
-  backgroundColor: "white"
-};
-
-const containerStyle = {
-  padding: "10%",
-};
+import Layout from '../components/Main';
+import { Button } from 'reactstrap';
 
 const WelcomePage = () => (
-  <div>
-    <Container style={containerStyle}>
-      <Jumbotron style={style}>
-        <h1>Bem vindo ao paredão do big brother Brasil!</h1>
-        <hr />
-        <Link to="/big-wall">
-          <Button color="primary">Ir para o paredão</Button>
-        </Link>
-      </Jumbotron>
-    </Container>
-  </div>
+  <Layout>
+    <h1>Bem vindo ao paredão do big brother Brasil!</h1>
+    <hr />
+    <Link to="/big-wall">
+      <Button color="primary">Ir para o paredão</Button>
+    </Link>
+  </Layout>
 );
 
 export default WelcomePage;

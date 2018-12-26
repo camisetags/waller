@@ -6,6 +6,7 @@
     "@babel/core": "7.1.0",
     "@svgr/webpack": "2.4.1",
     "axios": "^0.18.0",
+    "axios-extensions": "^3.0.5",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "23.6.0",
@@ -29,6 +30,7 @@
     "file-loader": "2.0.0",
     "fork-ts-checker-webpack-plugin-alt": "0.4.14",
     "fs-extra": "7.0.0",
+    "history": "^4.7.2",
     "html-webpack-plugin": "4.0.0-alpha.2",
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
@@ -117,5 +119,9 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "eslint-plugin-prettier": "^3.0.0",
+    "prettier": "1.15.3"
   }
 }
