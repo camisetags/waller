@@ -6,11 +6,13 @@ import wallService from '../services/wall';
 import Layout from '../components/Main';
 import UserImage from '../components/UserImage';
 import HeaderTitle from '../components/HeaderTitle';
+import UserSelector from '../components/UserSelector';
 
 class WallPage extends React.Component {
   state = {
     name: 'test',
-    users: []
+    users: [],
+    selectedVote: -1
   };
 
   componentDidMount() {
@@ -20,6 +22,14 @@ class WallPage extends React.Component {
       });
     });
   }
+
+  setSelectedUser = e => {
+    this.setState({
+      selectedVote: e.target.value
+    });
+  };
+
+  sendVote = e => {};
 
   render() {
     const divStyle = {
@@ -32,16 +42,18 @@ class WallPage extends React.Component {
     };
     return (
       <Layout>
-        <Link to={'/'}>
-          <Button color="primary">Voltar</Button>
-        </Link>
+        <Link to={'/'}>Voltar</Link>
         <HeaderTitle>Quem deve ser eliminado?</HeaderTitle>
+
         <hr />
         <Row>
           {this.state.users.slice(0, 2).map((user, index) => (
             <Col key={user.id}>
               <b>{user.name}</b>
-              <UserImage src={user.photo} />
+              <UserSelector
+                user={user}
+                setSelectedUser={this.setSelectedUser}
+              />
               <div>
                 Para eliminar o participante {user.name} ligue para o telefone
                 0800-123-00{index + 1} ou mande um SMS para 0800{index + 1}
