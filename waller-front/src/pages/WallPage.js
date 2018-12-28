@@ -9,7 +9,7 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap';
-import Recaptcha from 'react-recaptcha';
+import Recaptcha from 'react-google-recaptcha';
 
 import wallService from '../services/wall';
 
@@ -104,13 +104,13 @@ class WallPage extends React.Component {
         </Layout>
 
         <Modal isOpen={modalIsOpen} toggle={this.openModal}>
-          <ModalHeader toggle={this.openModal} />
-          <ModalBody>
+          <ModalHeader toggle={this.openModal}>
             Antes vamos verificar se você não é um robô!
+          </ModalHeader>
+          <ModalBody style={{ padding: '20%' }}>
             <Recaptcha
-              sitekey={'6LeeyIQUAAAAAFERgdGfZZBG99hHJe6yeUmAA6Eu'}
-              render="explicit"
-              verifyCallback={this.validateUser}
+              sitekey={'6LdCIIUUAAAAAHCxhYGWwd5fEVc70RFcEFmIqnZi'}
+              onChange={this.validateUser}
             />
           </ModalBody>
           <ModalFooter />
