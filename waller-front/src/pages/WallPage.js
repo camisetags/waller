@@ -1,15 +1,7 @@
 import React, { Fragment } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import {
-  Col,
-  Row,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from 'reactstrap';
-import Recaptcha from 'react-google-recaptcha';
+import { Col, Row, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import Recaptcha from 'react-recaptcha';
 
 import wallService from '../services/wall';
 
@@ -24,7 +16,8 @@ class WallPage extends React.Component {
     users: [],
     selectedVote: -1,
     modalIsOpen: false,
-    validUser: false
+    validUser: false,
+    sitekey: '6Ldlm4UUAAAAAGLrxcMRgCl1X965NY0W2ikpZi5z'
   };
 
   componentDidMount() {
@@ -42,19 +35,21 @@ class WallPage extends React.Component {
   };
 
   openModal = e => {
-    this.setState(state => ({
-      modalIsOpen: !state.modalIsOpen
-    }));
+    if (this.state.selectedVote !== -1) {
+      this.setState(state => ({
+        modalIsOpen: !state.modalIsOpen
+      }));
+    } else {
+      alert('Selecione seu voto antes de enviar!');
+    }
   };
 
-  validateUser = e => {
-    this.setState({
-      validUser: true
-    });
+  verifyCallback = response => {
+    console.log(response);
   };
 
   render() {
-    const { modalIsOpen, validUser } = this.state;
+    const { modalIsOpen, validUser, sitekey } = this.state;
 
     if (validUser) {
       return <Redirect to="/vote-computed" />;
@@ -109,11 +104,11 @@ class WallPage extends React.Component {
           </ModalHeader>
           <ModalBody style={{ padding: '20%' }}>
             <Recaptcha
-              sitekey={'6LdCIIUUAAAAAHCxhYGWwd5fEVc70RFcEFmIqnZi'}
-              onChange={this.validateUser}
+              sitekey={sitekey}
+              onloadCallback={this.onLoadRecaptchaCallback}
+              verifyCallback={this.verifyCallback}
             />
           </ModalBody>
-          <ModalFooter />
         </Modal>
       </Fragment>
     );
