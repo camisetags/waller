@@ -15,11 +15,19 @@ defmodule WallerWeb.UserController do
     case UserRepo.create_user(user_params) do
       {:ok, %User{} = user} -> 
         conn
-          |> put_status(:created)
-          |> put_resp_header("location", Routes.user_path(conn, :show, user))
-          |> render("show.json", user: user)
+        |> put_status(:created)
+        |> put_resp_header("location", Routes.user_path(conn, :show, user))
+        |> render("show.json", user: user)
       
-      {:error, errors} -> conn |> json(%{errors: errors})
+      {:error, %{ errors: errors }} -> 
+        conn 
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: errors})
+
+      _ -> 
+        conn
+        |> put_status(:internal_server_errror) 
+        |> json(%{ errors: "An internal error has occured." })
     end
   end
 

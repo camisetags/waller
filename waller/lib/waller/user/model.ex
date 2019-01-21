@@ -5,7 +5,8 @@ defmodule Waller.User.User do
   alias Waller.Wall.Wall
   alias Waller.Wall.UserWall
 
-  @derive {Poison.Encoder, except: [:__meta__]}
+  # @derive {Poison.Encoder, except: [:__meta__]}
+  @derive {Poison.Encoder, only: [ :age, :name, :photo, :votes ]}
   schema "users" do 
     field :age, :integer
     field :name, :string
