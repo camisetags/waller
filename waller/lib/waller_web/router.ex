@@ -16,11 +16,14 @@ defmodule WallerWeb.Router do
     post "/walls/close/:wall_id", WallsController, :close
     get "/walls/status/:wall_id", WallsController, :status
     options "/walls/status/:wall_id", WallsController, :options
+
   end
 
   scope "/", WallerWeb do
     pipe_through :api
 
     get "/", RootController, :index
+    post "/verify-captcha", RootController, :verify_captcha
+    options "/verify-captcha", RootController, :options
   end
 end

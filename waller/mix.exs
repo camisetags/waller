@@ -45,7 +45,8 @@ defmodule Waller.MixProject do
       {:poison, "~> 3.1"},
       {:redix, "~> 0.8.2"},
       {:poolboy, "~> 1.5.1"},
-      {:cors_plug, "~> 1.5"}
+      {:cors_plug, "~> 1.5"},
+      {:httpoison, "~> 1.4"}
     ]
   end
 
