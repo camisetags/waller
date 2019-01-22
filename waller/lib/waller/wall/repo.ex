@@ -45,6 +45,23 @@ defmodule Waller.Wall.WallRepo do
     end
   end
 
+  def all_paginated(%{page: page, page_size: page_size}) do
+    %Wall{}
+    |> preload(:users)
+    |> Repo.paginate(page: page, page_size: page_size)
+  end
+
+  def only_double(page, page_size \\ 30) do
+    from(w in Wall,
+      preload: [:users],
+      join: uw in UserWall, on: w.id == uw.wall_id,
+      join: u in User, on: uw.user_id == u.id,
+      group_by: w.id,
+      having: count(u) == 2,
+      select: [w])
+    |> Repo.paginate(page: page, page_size: page_size)
+  end
+
   defp put_user(changeset, user_list) do
     Ecto.Changeset.put_assoc(changeset, :users, user_list)
   end

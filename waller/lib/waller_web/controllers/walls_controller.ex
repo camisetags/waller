@@ -3,12 +3,26 @@ defmodule WallerWeb.WallsController do
 
   alias Ecto
   alias Waller.User.UserRepo
+  alias Scrivener.Page
+
 
   alias Waller.Wall.WallRepo
   alias Waller.Wall.Wall
   alias Waller.Wall.CacheLayer, as: WallCacheLayer
 
   action_fallback WallerWeb.FallbackController
+
+  def index(conn, %{ "only_double" => only_double, "page" => page }) when only_double == "true" do
+    take_doubles(conn, page: page)
+  end
+
+  def index(conn, %{ "page" => page }) do
+    take_all(conn, page: page)
+  end
+  
+  def index(conn, _params) do
+    take_all(conn, page: 1)
+  end
 
   def create(conn, %{"user_ids" => params, "result_date" => result}) do
     UserRepo.list_user_in(params)
@@ -85,4 +99,34 @@ defmodule WallerWeb.WallsController do
         |> json(%{error: ["Cannot create wall"]})
     end
   end
+
+  defp take_doubles(conn, %{ page: page }) do
+    case WallRepo.only_double(page, 30) do
+      %Page{} = result ->
+        conn
+        |> put_status(:ok)
+        |> json(result)
+      
+      _ -> 
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: "An internal server error has occured."})
+    end
+  end
+
+  defp take_all(conn, %{ page: page }) do
+    case WallRepo.all_paginated(page: page, page_size: 30) do 
+      %Page{} = result ->
+        conn
+        |> put_status(:ok)
+        |> json(result)
+
+      _ ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: "An internal server error has occured."})
+    end
+  end
 end
+
+
