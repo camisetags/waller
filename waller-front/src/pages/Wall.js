@@ -1,14 +1,13 @@
-import React, { Fragment } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Redirect } from 'react-router-dom';
 import { Col, Row, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Recaptcha from 'react-recaptcha';
 
 import wallService from '../services/wall';
-
-import Layout from '../components/Main';
-import HeaderTitle from '../components/HeaderTitle';
+import Header from '../components/Header';
 import UserSelector from '../components/UserSelector';
 import Divisor from '../components/Divisor';
+import captchaService from '../services/captcha';
 
 class WallPage extends React.Component {
   state = {
@@ -45,7 +44,14 @@ class WallPage extends React.Component {
   };
 
   verifyCallback = response => {
-    console.log(response);
+    const { history } = this.props;
+    captchaService.verifyToken(response).then(response => {
+      if (response.data.success) {
+        history.push('/results');
+      } else {
+        alert('Refaça o recaptcha novamente!');
+      }
+    });
   };
 
   render() {
@@ -65,38 +71,30 @@ class WallPage extends React.Component {
     };
 
     return (
-      <Fragment>
-        <Layout>
-          <Link to={'/'}>Voltar</Link>
-          <HeaderTitle>Quem deve ser eliminado?</HeaderTitle>
-
-          <Divisor />
-          <Row>
-            {this.state.users.slice(0, 2).map((user, index) => (
-              <Col key={user.id}>
-                <b>{user.name}</b>
-                <UserSelector
-                  user={user}
-                  setSelectedUser={this.setSelectedUser}
-                />
-                <div>
-                  Para eliminar o participante {user.name} ligue para o telefone
-                  0800-123-00{index + 1} ou mande um SMS para 0800{index + 1}
-                </div>
-              </Col>
-            ))}
-          </Row>
-          <hr />
-          <div style={divStyle}>
-            <Button
-              style={buttonStyle}
-              color="primary"
-              onClick={this.openModal}
-            >
-              Envie seu voto agora
-            </Button>
-          </div>
-        </Layout>
+      <>
+        <Header path="/">Quem deve ser eliminado?</Header>
+        <Divisor />
+        <Row>
+          {this.state.users.slice(0, 2).map((user, index) => (
+            <Col key={user.id}>
+              <b>{user.name}</b>
+              <UserSelector
+                user={user}
+                setSelectedUser={this.setSelectedUser}
+              />
+              <div>
+                Para eliminar o participante {user.name} ligue para o telefone
+                0800-123-00{index + 1} ou mande um SMS para 0800{index + 1}
+              </div>
+            </Col>
+          ))}
+        </Row>
+        <hr />
+        <div style={divStyle}>
+          <Button style={buttonStyle} color="primary" onClick={this.openModal}>
+            Envie seu voto agora
+          </Button>
+        </div>
 
         <Modal isOpen={modalIsOpen} toggle={this.openModal}>
           <ModalHeader toggle={this.openModal}>
@@ -110,7 +108,7 @@ class WallPage extends React.Component {
             />
           </ModalBody>
         </Modal>
-      </Fragment>
+      </>
     );
   }
 }

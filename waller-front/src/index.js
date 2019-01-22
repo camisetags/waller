@@ -1,16 +1,19 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import WelcomePage from './pages/WelcomePage';
-import WallPage from './pages/WallPage';
+import WelcomePage from './pages/Welcome';
+import WallPage from './pages/Wall';
+import Layout from './components/Layout';
+import Percentage from './pages/Percentage';
 
 const Routes = () => (
   <Router>
-    <Fragment>
+    <Layout>
       <Route exact path="/" component={WelcomePage} />
       <Route path="/big-wall" component={WallPage} />
-    </Fragment>
+      <Route path="/results" component={Percentage} />
+    </Layout>
   </Router>
 );
 

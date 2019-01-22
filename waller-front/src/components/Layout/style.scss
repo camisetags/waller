@@ -1,0 +1,21 @@
+.container-box {
+  box-shadow: 0px 0px 0px 7px #e5e5e5;
+  background-color: white;
+}
+
+.content {
+  padding: 5%;
+}
+
+.close-button {
+  background-image: url(../../images/sprite.png);
+  background-position: 0px -99px;
+  width: 41px;
+  height: 43px;
+
+  position: relative;
+  float: right;
+
+  top: -17px;
+  right: -22px;
+}

@@ -1,0 +1,29 @@
+.header-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex-wrap: wrap-reverse;
+  align-items: baseline;
+}
+
+.text-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.text-content {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.logo {
+  background-image: url(../../images/sprite.png);
+  background-position: 0px -1px;
+  width: 41px;
+  height: 38px;
+}
+
+.header-content {
+  align-self: center;
+}
