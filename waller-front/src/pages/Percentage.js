@@ -7,17 +7,17 @@ class Percentage extends React.Component {
   render() {
     return (
       <>
-    <Header path="/big-wall">Quem deve ser eliminado?</Header>
-    <Divisor />
-    <Row>
-      {this.state.users.slice(0, 2).map((user, index) => (
-        <Col key={user.id}>
-          <b>{user.name}</b>
-          <UserSelector user={user} setSelectedUser={this.setSelectedUser} />
-        </Col>
-      ))}
-    </Row>
-  </>
+        <Header path="/big-wall">Quem deve ser eliminado?</Header>
+        <Divisor />
+        <Row>
+          {this.state.users.slice(0, 2).map((user, index) => (
+            <Col key={user.id}>
+              <b>{user.name}</b>
+              <UserSelector user={user} setSelectedUser={this.setSelectedUser} />
+            </Col>
+          ))}
+        </Row>
+      </>
     );
   }
 }
