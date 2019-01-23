@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
-import { Col, Row, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
+import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Recaptcha from 'react-recaptcha';
 
 import wallService from '../services/wall';
@@ -85,9 +85,27 @@ class WallPage extends React.Component {
       <>
         <Header path="/">Quem deve ser eliminado?</Header>
         <Divisor />
-        <Row>
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between'
+          }}
+        >
           {this.state.users.map((user, index) => (
-            <Col key={user.id}>
+            <div
+              key={user.id}
+              style={{
+                height: '400px',
+                width: '400px',
+                display: 'flex',
+                flexDirection: 'column',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
               <b>{user.name}</b>
               <UserSelector
                 user={user}
@@ -97,9 +115,10 @@ class WallPage extends React.Component {
                 Para eliminar o participante {user.name} ligue para o telefone
                 0800-123-00{index + 1} ou mande um SMS para 0800{index + 1}
               </div>
-            </Col>
+            </div>
           ))}
-        </Row>
+        </div>
+
         <hr />
         <div style={divStyle}>
           <Button style={buttonStyle} color="primary" onClick={this.openModal}>

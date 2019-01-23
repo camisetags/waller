@@ -1,9 +1,15 @@
+$high-tide: 500px;
+
 .header-wrapper {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   flex-wrap: wrap-reverse;
   align-items: baseline;
+
+  @media (max-width: $high-tide) {
+    align-items: center;
+  }
 }
 
 .text-container {
