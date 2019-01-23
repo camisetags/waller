@@ -45,13 +45,12 @@ defmodule Waller.Wall.WallRepo do
     end
   end
 
-  def all_paginated(%{page: page, page_size: page_size}) do
-    %Wall{}
-    |> preload(:users)
+  def all_paginated([page: page, page_size: page_size]) do
+    from(w in Wall, preload: [:users])
     |> Repo.paginate(page: page, page_size: page_size)
   end
 
-  def only_double(page, page_size \\ 30) do
+  def only_double([page: page, page_size: page_size]) do
     from(w in Wall,
       preload: [:users],
       join: uw in UserWall, on: w.id == uw.wall_id,

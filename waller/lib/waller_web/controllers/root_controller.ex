@@ -2,6 +2,8 @@ defmodule WallerWeb.RootController do
   use WallerWeb, :controller
   alias Poison
   import HTTPoison, only: [post: 3]
+  
+  @recaptcha_secret Application.get_env(:waller, :recaptcha_secret)
 
   def index(conn, _params) do
     conn |> json(%{message: "Welcome!"})
@@ -10,8 +12,7 @@ defmodule WallerWeb.RootController do
   def verify_captcha(conn, %{ "response" => response }) do
     captcha_url = "https://www.google.com/recaptcha/api/siteverify"
     headers = [{"Content-Type", "application/x-www-form-urlencoded"}]
-    secret = "6Ldlm4UUAAAAAMwECDVBzSuncDBEw5A6EubInKyT"
-    gtoken_body = "secret=#{secret}&response=#{response}"
+    gtoken_body = "secret=#{@recaptcha_secret}&response=#{response}"
 
     case post(captcha_url, gtoken_body, headers) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
@@ -20,7 +21,7 @@ defmodule WallerWeb.RootController do
         conn 
         |> put_status(:not_found)
         |> json(%{ error: "Not found" })
-      {:error, %HTTPoison.Error{reason: reason}} ->
+      {:error, %HTTPoison.Error{} = _} ->
         conn 
         |> put_status(:internal_server_error)
         |> json(%{ error: "Internal server error" })

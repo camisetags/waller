@@ -1,15 +1,39 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'reactstrap';
+import wallService from '../services/wall';
 
-const WelcomePage = () => (
-  <>
-    <h1>Bem vindo ao paredão do big brother Brasil!</h1>
-    <hr />
-    <Link to="/big-wall">
-      <Button color="primary">Ir para o paredão</Button>
-    </Link>
-  </>
-);
+class WelcomePage extends React.Component {
+  state = {
+    walls: []
+  };
+
+  componentDidMount() {
+    wallService.getDoublesWalls().then(response => {
+      this.setState({
+        walls: response.data.entries
+      });
+    });
+  }
+
+  render() {
+    const { walls } = this.state;
+
+    return (
+      <>
+        <h1>Bem vindo ao paredão do big brother Brasil!</h1>
+        <hr />
+        Selecione algum paredão:
+        <ul>
+          {walls.map(wall => (
+            <li key={wall.id}>
+              <Link to={`/big-wall/${wall.id}`}>Paredão número {wall.id}</Link>
+            </li>
+          ))}
+        </ul>
+      </>
+    );
+  }
+}
 
 export default WelcomePage;

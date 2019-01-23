@@ -13,23 +13,23 @@ class WallPage extends React.Component {
   state = {
     name: 'test',
     users: [],
-    selectedVote: -1,
+    selectedVoteID: -1,
     modalIsOpen: false,
     validUser: false,
     sitekey: '6Ldlm4UUAAAAAGLrxcMRgCl1X965NY0W2ikpZi5z'
   };
 
   componentDidMount() {
-    wallService.getWall(1).then(data => {
+    wallService.getWall(this.props.match.params.wall_id).then(response => {
       this.setState({
-        users: data.data.users
+        users: response.data.users
       });
     });
   }
 
   setSelectedUser = e => {
     this.setState({
-      selectedVote: e.target.value
+      selectedVoteID: e.target.value
     });
   };
 
@@ -44,15 +44,25 @@ class WallPage extends React.Component {
   };
 
   verifyCallback = response => {
-    const { history } = this.props;
+    const { history, match } = this.props;
     captchaService.verifyToken(response).then(response => {
       if (response.data.success) {
-        history.push('/results');
+        this.sendVoteToUser({
+          wallID: match.params.wall_id,
+          userID: this.state.selectedVoteID
+        });
+        history.push(`/results/${match.params.wall_id}`);
       } else {
         alert('Refaça o recaptcha novamente!');
       }
     });
   };
+
+  sendVoteToUser({ wallID, userID }) {
+    wallService
+      .sendVote({ wallID, userID })
+      .then(response => console.log(response));
+  }
 
   render() {
     const { modalIsOpen, validUser, sitekey } = this.state;
@@ -75,7 +85,7 @@ class WallPage extends React.Component {
         <Header path="/">Quem deve ser eliminado?</Header>
         <Divisor />
         <Row>
-          {this.state.users.slice(0, 2).map((user, index) => (
+          {this.state.users.map((user, index) => (
             <Col key={user.id}>
               <b>{user.name}</b>
               <UserSelector

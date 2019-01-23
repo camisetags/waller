@@ -11,8 +11,8 @@ const Routes = () => (
   <Router>
     <Layout>
       <Route exact path="/" component={WelcomePage} />
-      <Route path="/big-wall" component={WallPage} />
-      <Route path="/results" component={Percentage} />
+      <Route path="/big-wall/:wall_id" component={WallPage} />
+      <Route path="/results/:wall_id" component={Percentage} />
     </Layout>
   </Router>
 );

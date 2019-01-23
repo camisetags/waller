@@ -13,15 +13,15 @@ defmodule WallerWeb.WallsController do
   action_fallback WallerWeb.FallbackController
 
   def index(conn, %{ "only_double" => only_double, "page" => page }) when only_double == "true" do
-    take_doubles(conn, page: page)
+    take_doubles(conn, %{page: page})
   end
 
   def index(conn, %{ "page" => page }) do
-    take_all(conn, page: page)
+    take_all(conn, %{page: page})
   end
   
   def index(conn, _params) do
-    take_all(conn, page: 1)
+    take_all(conn, %{page: 1})
   end
 
   def create(conn, %{"user_ids" => params, "result_date" => result}) do
@@ -101,11 +101,11 @@ defmodule WallerWeb.WallsController do
   end
 
   defp take_doubles(conn, %{ page: page }) do
-    case WallRepo.only_double(page, 30) do
+    case WallRepo.only_double(page: page, page_size: 30) do
       %Page{} = result ->
         conn
         |> put_status(:ok)
-        |> json(result)
+        |> json(%{ data: result })
       
       _ -> 
         conn
@@ -119,7 +119,7 @@ defmodule WallerWeb.WallsController do
       %Page{} = result ->
         conn
         |> put_status(:ok)
-        |> json(result)
+        |> json(%{ data: result })
 
       _ ->
         conn
