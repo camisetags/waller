@@ -46,26 +46,24 @@ class WallPage extends React.Component {
   verifyCallback = response => {
     const { history, match } = this.props;
 
-    captchaService.verifyToken(response)
+    captchaService
+      .verifyToken(response)
       .then(response => {
         if (response.data.success) {
-          return response.data.success
+          return response.data.success;
         } else {
           throw new Error('Refaça o recaptcha novamente!');
         }
-      }).then(() => wallService.sendVote({
-        wallID: match.params.wall_id,
-        userID: this.state.selectedVoteID
-      }))
+      })
+      .then(() =>
+        wallService.sendVote({
+          wallID: match.params.wall_id,
+          userID: this.state.selectedVoteID
+        })
+      )
       .then(() => history.push(`/results/${match.params.wall_id}`))
       .catch(error => console.log(error));
   };
-
-  // sendVoteToUser({ wallID, userID }) {
-  //   wallService
-  //     .sendVote({ wallID, userID })
-  //     .then(response => console.log(response));
-  // }
 
   render() {
     const { modalIsOpen, validUser, sitekey } = this.state;

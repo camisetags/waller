@@ -11,16 +11,20 @@ defmodule WallerWeb.WallsController do
 
   action_fallback WallerWeb.FallbackController
 
-  def index(conn, %{"only_double" => only_double, "page" => page}) when only_double == "true" do
-    take_doubles(conn, page: page)
-  end
+  def index(conn, params) do
+    case params do
+      %{"only_doubles" => "true"} ->
+        take_doubles(conn, page: 1)
 
-  def index(conn, %{"page" => page}) do
-    take_all(conn, page: page)
-  end
+      %{"only_doubles" => "true", "page" => page} ->
+        take_doubles(conn, page: page)
 
-  def index(conn, _params) do
-    take_all(conn, page: 1)
+      %{"page" => page} ->
+        take_all(conn, page: page)
+
+      _ ->
+        take_all(conn, page: 1)
+    end
   end
 
   def create(conn, %{"user_ids" => params, "result_date" => result}) do
@@ -57,12 +61,11 @@ defmodule WallerWeb.WallsController do
   end
 
   def status(conn, %{"wall_id" => wall_id}) do
-    case WallCacheLayer.status(wall_id) do
-      %Wall{} = wall ->
-        conn
-        |> put_status(:ok)
-        |> json(%{data: wall})
-
+    with %Wall{} = wall <- WallCacheLayer.status(wall_id) do
+      conn
+      |> put_status(:ok)
+      |> json(%{data: wall})
+    else
       {:error, error} ->
         conn
         |> put_status(:internal_server_error)
@@ -99,12 +102,12 @@ defmodule WallerWeb.WallsController do
     end
   end
 
-  defp take_doubles(conn, %{page: page}) do
-    case WallRepo.only_double(page, 30) do
+  defp take_doubles(conn, page: page) do
+    case WallRepo.only_double(page: page, page_size: 30) do
       %Page{} = result ->
         conn
         |> put_status(:ok)
-        |> json(result)
+        |> json(%{data: result})
 
       _ ->
         conn
@@ -113,7 +116,7 @@ defmodule WallerWeb.WallsController do
     end
   end
 
-  defp take_all(conn, %{page: page}) do
+  defp take_all(conn, page: page) do
     case WallRepo.all_paginated(page: page, page_size: 30) do
       %Page{} = result ->
         conn

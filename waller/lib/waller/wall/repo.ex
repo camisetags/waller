@@ -59,7 +59,7 @@ defmodule Waller.Wall.WallRepo do
       on: uw.user_id == u.id,
       group_by: w.id,
       having: count(u) == 2,
-      select: [w]
+      select: w
     )
     |> Repo.paginate(page: page, page_size: page_size)
   end

@@ -1,22 +1,21 @@
 import axiosInstance from './axios';
 
 const wallService = {
-  getDoublesWalls() {
-    return axiosInstance
-      .get('/api/walls?only_double=true')
-      .then(response => response.data);
+  async getDoublesWalls() {
+    const response = await axiosInstance.get('/api/walls?only_doubles=true');
+    return response.data;
   },
 
-  getWall(wallId) {
-    return axiosInstance
-      .get(`/api/walls/status/${wallId}`)
-      .then(response => response.data);
+  async getWall(wallId) {
+    const response = await axiosInstance.get(`/api/walls/status/${wallId}`);
+    return response.data;
   },
 
-  sendVote({ wallID, userID }) {
-    return axiosInstance
-      .post(`/api/walls/vote/${wallID}/to/${userID}`)
-      .then(response => response.data);
+  async sendVote({ wallID, userID }) {
+    const response = await axiosInstance.post(
+      `/api/walls/vote/${wallID}/to/${userID}`
+    );
+    return response.data;
   }
 };
 
