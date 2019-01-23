@@ -20,7 +20,7 @@ defmodule WallerWeb.WallsController do
   end
 
   def index(conn, _params) do
-    take_all(conn, %{page: 1})
+    take_all(conn, page: 1)
   end
 
   def create(conn, %{"user_ids" => params, "result_date" => result}) do

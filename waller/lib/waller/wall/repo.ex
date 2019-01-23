@@ -4,7 +4,7 @@ defmodule Waller.Wall.WallRepo do
   """
   import Enum, only: [map: 2]
   import Ecto.Query, warn: false
-  
+
   alias Waller.Repo
   alias Waller.Wall.Wall
   alias Waller.Wall.UserWall
@@ -45,56 +45,65 @@ defmodule Waller.Wall.WallRepo do
     end
   end
 
-  def all_paginated([page: page, page_size: page_size]) do
+  def all_paginated(page: page, page_size: page_size) do
     from(w in Wall, preload: [:users])
     |> Repo.paginate(page: page, page_size: page_size)
   end
 
-  def only_double([page: page, page_size: page_size]) do
+  def only_double(page: page, page_size: page_size) do
     from(w in Wall,
       preload: [:users],
-      join: uw in UserWall, on: w.id == uw.wall_id,
-      join: u in User, on: uw.user_id == u.id,
+      join: uw in UserWall,
+      on: w.id == uw.wall_id,
+      join: u in User,
+      on: uw.user_id == u.id,
       group_by: w.id,
       having: count(u) == 2,
-      select: [w])
+      select: [w]
+    )
     |> Repo.paginate(page: page, page_size: page_size)
   end
 
   defp put_user(changeset, user_list) do
     Ecto.Changeset.put_assoc(changeset, :users, user_list)
   end
-  
+
   defp complete_wall(wall_id) do
     from wall in Wall,
-      join: user_wall in UserWall, on: wall.id == user_wall.wall_id,
-      join: user in User, on: user_wall.user_id == user.id,
+      join: user_wall in UserWall,
+      on: wall.id == user_wall.wall_id,
+      join: user in User,
+      on: user_wall.user_id == user.id,
       where: wall.id == ^wall_id,
-      select: %{ wall: wall, user: user, user_wall: user_wall}
+      select: %{wall: wall, user: user, user_wall: user_wall}
   end
-  
+
   defp wall_with_user_wall(%{user_id: user_id, wall_id: wall_id}) do
     from user_wall in UserWall,
-      join: wall in Wall, on: user_wall.wall_id == wall.id,
+      join: wall in Wall,
+      on: user_wall.wall_id == wall.id,
       where: user_wall.user_id == ^user_id and user_wall.wall_id == ^wall_id,
       select: {user_wall, wall}
   end
 
   defp build_complete_wall(query_result) do
     [%{wall: wall, user: _, user_wall: _} | _] = query_result
+
     %Wall{
       id: wall.id,
       running: wall.running,
       result_date: wall.result_date,
-      users: query_result |> map(fn result -> 
-        %{
-          id: result.user.id, 
-          name: result.user.name,
-          photo: result.user.photo,
-          age: result.user.age,
-          votes: result.user_wall.votes
-        }
-      end)
+      users:
+        query_result
+        |> map(fn result ->
+          %{
+            id: result.user.id,
+            name: result.user.name,
+            photo: result.user.photo,
+            age: result.user.age,
+            votes: result.user_wall.votes
+          }
+        end)
     }
   end
 
@@ -106,7 +115,7 @@ defmodule Waller.Wall.WallRepo do
     user_wall
     |> UserWall.changeset(%{votes: user_wall.votes + votes_count})
     |> Repo.update()
-    
+
     user_wall.votes
   end
 end
@@ -123,18 +132,19 @@ defmodule Waller.Wall.CacheLayer do
 
   def status(wall_id) do
     case RedixPool.command(["GET", "status_#{wall_id}"]) do
-      {:ok, nil} -> 
-        WallRepo.status(wall_id) 
+      {:ok, nil} ->
+        WallRepo.status(wall_id)
         |> set_status_cache()
         |> sum_votes_mem_with_cache()
 
-      {:ok, value} -> 
+      {:ok, value} ->
         value
         |> Poison.decode(%{keys: :atoms!})
         |> elem(1)
         |> sum_votes_mem_with_cache()
 
-      {:error, error} -> {:error, error}
+      {:error, error} ->
+        {:error, error}
     end
   end
 
@@ -145,9 +155,12 @@ defmodule Waller.Wall.CacheLayer do
     if votes_count === @votes_count_size do
       set_mem_votes(cache_key, 0)
       RedixPool.command(["DEL", "status_#{wall_id}"])
-      {:ok, WallRepo.send_vote(
-        %{wall_id: wall_id, user_id: user_id}, votes_count
-      )}
+
+      {:ok,
+       WallRepo.send_vote(
+         %{wall_id: wall_id, user_id: user_id},
+         votes_count
+       )}
     else
       set_mem_votes(cache_key, votes_count)
     end
@@ -167,14 +180,15 @@ defmodule Waller.Wall.CacheLayer do
   defp set_status_cache(status) do
     cache_key = "status_#{status.id}"
     encoded_value = Poison.encode(status) |> elem(1)
-    
-    status = case RedixPool.command(["SET", cache_key, encoded_value]) do
-      {:ok, "OK"} -> status
-      {:error, error} -> {:error, error}
-    end
-    
+
+    status =
+      case RedixPool.command(["SET", cache_key, encoded_value]) do
+        {:ok, "OK"} -> status
+        {:error, error} -> {:error, error}
+      end
+
     RedixPool.command(["EXPIRE", cache_key, @cache_time])
-    
+
     status
   end
 
@@ -187,23 +201,28 @@ defmodule Waller.Wall.CacheLayer do
       id: cached_wall.id,
       running: cached_wall.running,
       result_date: cached_wall.result_date,
-      users: cached_wall.users |> map(fn user -> 
-        %{
-          id: user.id, 
-          name: user.name,
-          photo: user.photo,
-          age: user.age,
-          votes: user.votes + votes_from_mem(%{
-            wall_id: cached_wall.id,
-            user_id: user.id
-          })
-        }
-      end)
+      users:
+        cached_wall.users
+        |> map(fn user ->
+          %{
+            id: user.id,
+            name: user.name,
+            photo: user.photo,
+            age: user.age,
+            votes:
+              user.votes +
+                votes_from_mem(%{
+                  wall_id: cached_wall.id,
+                  user_id: user.id
+                })
+          }
+        end)
     }
   end
 
   defp votes_from_mem(%{wall_id: wall_id, user_id: user_id}) do
     cache_key = "votes_from_mem_#{wall_id}_#{user_id}"
+
     case RedixPool.command(["GET", cache_key]) do
       {:ok, nil} -> 0
       {:ok, "0"} -> 0
