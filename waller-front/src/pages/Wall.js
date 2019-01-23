@@ -33,7 +33,7 @@ class WallPage extends React.Component {
     });
   };
 
-  openModal = e => {
+  openModal = () => {
     if (this.state.selectedVote !== -1) {
       this.setState(state => ({
         modalIsOpen: !state.modalIsOpen
@@ -45,24 +45,27 @@ class WallPage extends React.Component {
 
   verifyCallback = response => {
     const { history, match } = this.props;
-    captchaService.verifyToken(response).then(response => {
-      if (response.data.success) {
-        this.sendVoteToUser({
-          wallID: match.params.wall_id,
-          userID: this.state.selectedVoteID
-        });
-        history.push(`/results/${match.params.wall_id}`);
-      } else {
-        alert('Refaça o recaptcha novamente!');
-      }
-    });
+
+    captchaService.verifyToken(response)
+      .then(response => {
+        if (response.data.success) {
+          return response.data.success
+        } else {
+          throw new Error('Refaça o recaptcha novamente!');
+        }
+      }).then(() => wallService.sendVote({
+        wallID: match.params.wall_id,
+        userID: this.state.selectedVoteID
+      }))
+      .then(() => history.push(`/results/${match.params.wall_id}`))
+      .catch(error => console.log(error));
   };
 
-  sendVoteToUser({ wallID, userID }) {
-    wallService
-      .sendVote({ wallID, userID })
-      .then(response => console.log(response));
-  }
+  // sendVoteToUser({ wallID, userID }) {
+  //   wallService
+  //     .sendVote({ wallID, userID })
+  //     .then(response => console.log(response));
+  // }
 
   render() {
     const { modalIsOpen, validUser, sitekey } = this.state;
