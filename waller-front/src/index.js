@@ -2,10 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import WelcomePage from './pages/Welcome';
-import WallPage from './pages/Wall';
-import Layout from './components/Layout';
-import Percentage from './pages/Percentage';
+import WelcomePage from './pages/welcome';
+import WallPage from './pages/wall';
+import Layout from './components/layout';
+import Percentage from './pages/percentage';
 
 const Routes = () => (
   <Router>

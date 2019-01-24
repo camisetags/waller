@@ -3,11 +3,13 @@ import { Redirect } from 'react-router-dom';
 import { Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import Recaptcha from 'react-recaptcha';
 
-import wallService from '../services/wall';
-import Header from '../components/Header';
-import UserSelector from '../components/UserSelector';
-import Divisor from '../components/Divisor';
-import captchaService from '../services/captcha';
+import wallService from '../../services/wall';
+import Header from '../../components/header';
+import UserSelector from '../../components/userSelector';
+import Divisor from '../../components/divisor';
+import captchaService from '../../services/captcha';
+
+import './style.scss';
 
 class WallPage extends React.Component {
   state = {
@@ -72,15 +74,6 @@ class WallPage extends React.Component {
       return <Redirect to="/vote-computed" />;
     }
 
-    const divStyle = {
-      display: 'grid'
-    };
-
-    const buttonStyle = {
-      alignSelf: 'center',
-      justifySelf: 'center'
-    };
-
     return (
       <>
         <Header path="/">Quem deve ser eliminado?</Header>
@@ -94,18 +87,7 @@ class WallPage extends React.Component {
           }}
         >
           {this.state.users.map((user, index) => (
-            <div
-              key={user.id}
-              style={{
-                height: '400px',
-                width: '400px',
-                display: 'flex',
-                flexDirection: 'column',
-                flexWrap: 'wrap',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}
-            >
+            <div key={user.id} className="photos-container">
               <b>{user.name}</b>
               <UserSelector
                 user={user}
@@ -120,8 +102,12 @@ class WallPage extends React.Component {
         </div>
 
         <hr />
-        <div style={divStyle}>
-          <Button style={buttonStyle} color="primary" onClick={this.openModal}>
+        <div className="footer-container">
+          <Button
+            className="footer-content"
+            color="primary"
+            onClick={this.openModal}
+          >
             Envie seu voto agora
           </Button>
         </div>

@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from 'reactstrap';
-import wallService from '../services/wall';
+import wallService from '../../services/wall';
 
 class WelcomePage extends React.Component {
   state = {

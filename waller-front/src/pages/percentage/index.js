@@ -1,9 +1,9 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
-import Header from '../components/Header';
-import Divisor from '../components/Divisor';
-import UserSelector from '../components/UserSelector';
-import wallService from '../services/wall';
+import Header from '../../components/header';
+import Divisor from '../../components/divisor';
+import UserSelector from '../../components/userSelector';
+import wallService from '../../services/wall';
 
 class Percentage extends React.Component {
   state = {
