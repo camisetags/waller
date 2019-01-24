@@ -1,0 +1,17 @@
+.main-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.users-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.vote-success-message {
+  width: 100%;
+  align-self: center;
+  text-align: center;
+}

@@ -17,8 +17,7 @@ class WallPage extends React.Component {
     users: [],
     selectedVoteID: -1,
     modalIsOpen: false,
-    validUser: false,
-    sitekey: '6Ldlm4UUAAAAAGLrxcMRgCl1X965NY0W2ikpZi5z'
+    validUser: false
   };
 
   componentDidMount() {
@@ -68,7 +67,7 @@ class WallPage extends React.Component {
   };
 
   render() {
-    const { modalIsOpen, validUser, sitekey } = this.state;
+    const { modalIsOpen, validUser } = this.state;
 
     if (validUser) {
       return <Redirect to="/vote-computed" />;
@@ -118,7 +117,7 @@ class WallPage extends React.Component {
           </ModalHeader>
           <ModalBody style={{ padding: '20%' }}>
             <Recaptcha
-              sitekey={sitekey}
+              sitekey={process.env.RECAPTCHA_KEY}
               onloadCallback={this.onLoadRecaptchaCallback}
               verifyCallback={this.verifyCallback}
             />

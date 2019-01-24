@@ -12,7 +12,7 @@ const Routes = () => (
     <Layout>
       <Route exact path="/" component={WelcomePage} />
       <Route path="/big-wall/:wall_id" component={WallPage} />
-      <Route path="/results/:wall_id" component={Percentage} />
+      <Route path="/results/:wall_id/:voted_user" component={Percentage} />
     </Layout>
   </Router>
 );

@@ -75,7 +75,10 @@ function getClientEnvironment(publicUrl) {
         // This should only be used as an escape hatch. Normally you would put
         // images into the `src` and `import` them in code to get their paths.
         PUBLIC_URL: publicUrl,
-        API_URL: process.env.API_URL || 'http://localhost:4000'
+        API_URL: process.env.API_URL || 'http://localhost:4000',
+        RECAPTCHA_KEY:
+          process.env.RECAPTCHA_KEY ||
+          '6Ldlm4UUAAAAAGLrxcMRgCl1X965NY0W2ikpZi5z'
       }
     );
   // Stringify all values so we can feed into Webpack DefinePlugin
