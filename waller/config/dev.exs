@@ -56,7 +56,6 @@ config :waller, Waller.Repo,
   port: System.get_env("PGPORT") || 54322,
   pool_size: 10
 
-
 config :waller, :redix_pool,
   host: System.get_env("REDIS_HOST") || "localhost",
   port: System.get_env("REDIS_PORT") || 6932,

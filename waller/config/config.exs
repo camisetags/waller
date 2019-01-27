@@ -13,7 +13,7 @@ config :waller,
 # Configures the endpoint
 config :waller, WallerWeb.Endpoint,
   url: [host: "localhost"],
-  secret_key_base: "8X1mbNxHXZlkdZG0N2hX26MWok6fo7up+77s4Oc+lIpgO9Wc3+zTLSL41tv+vRXz",
+  secret_key_base: "F1YXGOf7vIvl0BnwhZQYMDfr01/9VICunfmDzMUPW3aKZsO416o2yaQsrFsKIFwE",
   render_errors: [view: WallerWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Waller.PubSub, adapter: Phoenix.PubSub.PG2]
 
@@ -46,6 +46,6 @@ config :cors_plug,
     "X-Requested-With",
     "If-Modified-Since",
     "X-CSRF-Token",
-    "Access-Control-Allow-Origin",
+    "Access-Control-Allow-Origin"
   ],
   send_preflight_response?: true

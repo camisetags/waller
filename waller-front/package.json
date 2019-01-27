@@ -17,6 +17,7 @@
     "bootstrap": "^4.2.1",
     "case-sensitive-paths-webpack-plugin": "2.1.2",
     "chalk": "2.4.1",
+    "chart.js": "^2.7.3",
     "css-loader": "1.0.0",
     "d3": "^5.7.0",
     "dotenv": "6.0.0",
