@@ -29,7 +29,7 @@ defmodule Waller.Wall.Wall do
   @derive {Poison.Encoder, except: [:__meta__]}
   schema "walls" do
     field :running, :boolean
-    field :result_date, :date
+    field :result_date, :utc_datetime
 
     many_to_many(:users, User, join_through: UserWall)
 
@@ -39,9 +39,9 @@ defmodule Waller.Wall.Wall do
   @doc false
   def changeset(wall, attrs) do
     fields = [:running, :result_date]
+
     wall
     |> cast(attrs, fields)
     |> validate_required(fields)
   end
 end
-

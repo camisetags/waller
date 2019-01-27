@@ -80,12 +80,19 @@ defmodule WallerWeb.WallsController do
   end
 
   defp form_wall(wall_users, result, conn) do
-    wall = %{
-      running: true,
-      result_date: Date.from_iso8601!(result)
-    }
+    with {:ok, result} <- Date.from_iso8601(result) do
+      wall = %{
+        running: true,
+        result_date: result
+      }
 
-    create_new_wall(conn, wall, wall_users)
+      create_new_wall(conn, wall, wall_users)
+    else
+      {:error, error} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: error})
+    end
   end
 
   defp create_new_wall(conn, wall, wall_users) do
