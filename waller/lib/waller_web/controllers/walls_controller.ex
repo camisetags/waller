@@ -27,8 +27,8 @@ defmodule WallerWeb.WallsController do
     end
   end
 
-  def create(conn, %{"user_ids" => params, "result_date" => result}) do
-    UserRepo.list_user_in(params)
+  def create(conn, %{"user_ids" => ids, "result_date" => result}) do
+    UserRepo.list_user_in(ids)
     |> form_wall(result, conn)
   end
 
@@ -39,10 +39,10 @@ defmodule WallerWeb.WallsController do
         |> put_status(:ok)
         |> json(%{message: "Your vote was computed!"})
 
-      {:error, changeset} ->
+      {:error, %Ecto.Changeset{} = error} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> json(%{errors: changeset})
+        |> json(%{errors: error.errors})
     end
   end
 
@@ -80,10 +80,10 @@ defmodule WallerWeb.WallsController do
   end
 
   defp form_wall(wall_users, result, conn) do
-    with {:ok, result} <- Date.from_iso8601(result) do
+    with {:ok, datetime, _} <- DateTime.from_iso8601(result) do
       wall = %{
         running: true,
-        result_date: result
+        result_date: datetime
       }
 
       create_new_wall(conn, wall, wall_users)
@@ -102,10 +102,10 @@ defmodule WallerWeb.WallsController do
         |> put_status(:created)
         |> render("show.json", wall: created_wall)
 
-      {:error, %Ecto.Changeset{} = _} ->
+      {:error, %Ecto.Changeset{} = error} ->
         conn
         |> put_status(:unprocessable_entity)
-        |> json(%{error: ["Cannot create wall"]})
+        |> json(%{errors: error.errors})
     end
   end
 
