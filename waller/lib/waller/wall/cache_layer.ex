@@ -4,6 +4,7 @@ defmodule Waller.Wall.CacheLayer do
   alias Waller.Wall.WallRepo
   alias Waller.RedixPool
   alias Waller.Wall.Wall
+  alias Waller.User.UserRepo
 
   @votes_count_size 90
   @cache_time 5 * 60
@@ -29,27 +30,36 @@ defmodule Waller.Wall.CacheLayer do
   def send_vote(%{wall_id: wall_id, user_id: user_id}) do
     cache_key = "votes_from_mem_#{wall_id}_#{user_id}"
     votes_count = votes_from_mem(%{wall_id: wall_id, user_id: user_id}) + 1
+    user_or_wall_exists = check_wall_or_user_exists(wall_id: wall_id, user_id: user_id)
 
-    if votes_count === @votes_count_size do
-      set_mem_votes(cache_key, 0)
-      RedixPool.command(["DEL", "status_#{wall_id}"])
+    if user_or_wall_exists do
+      if votes_count === @votes_count_size do
+        set_mem_votes(cache_key, 0)
+        RedixPool.command(["DEL", "status_#{wall_id}"])
 
-      persist_vote(%{wall_id: wall_id, user_id: user_id}, votes_count)
+        persist_vote(%{wall_id: wall_id, user_id: user_id}, votes_count)
+      else
+        set_mem_votes(cache_key, votes_count)
+      end
     else
-      set_mem_votes(cache_key, votes_count)
+      {:error, ["Wall or user does not exists."]}
     end
   end
 
   defp persist_vote(%{wall_id: wall_id, user_id: user_id}, votes_count) do
-    case WallRepo.send_vote(%{wall_id: wall_id, user_id: user_id}, votes_count) do
-      {:ok, result} -> {:ok, result}
+    vote_data = %{wall_id: wall_id, user_id: user_id}
+
+    with {:ok, result} <- WallRepo.send_vote(vote_data, votes_count) do
+      {:ok, result}
+    else
       {:error, error} -> {:error, error}
     end
   end
 
   defp set_mem_votes(cache_key, votes_count) do
-    case RedixPool.command(["SET", cache_key, votes_count]) do
-      {:ok, "OK"} -> {:ok, votes_count}
+    with {:ok, "OK"} <- RedixPool.command(["SET", cache_key, votes_count]) do
+      {:ok, votes_count}
+    else
       {:error, error} -> {:error, error}
     end
   end
@@ -109,6 +119,50 @@ defmodule Waller.Wall.CacheLayer do
       {:ok, "0"} -> 0
       {:ok, value} -> Integer.parse(value) |> elem(0)
       {:error, error} -> {:error, error}
+    end
+  end
+
+  defp check_wall_or_user_exists(wall_id: wall_id, user_id: user_id) do
+    user =
+      case RedixPool.command(["GET", "user_id_#{user_id}"]) do
+        {:ok, nil} ->
+          try do
+            user = UserRepo.get_user!(user_id)
+            RedixPool.command(["SET", "user_id_#{user_id}", Poison.encode!(user)])
+            {:ok, user}
+          rescue
+            Ecto.NoResultsError -> {:error, false}
+          end
+
+        {:ok, value} ->
+          {:ok, Poison.decode!(value)}
+
+        {:error, error} ->
+          {:error, error}
+      end
+
+    wall =
+      case(RedixPool.command(["GET", "wall_id_#{wall_id}"])) do
+        {:ok, nil} ->
+          try do
+            wall = WallRepo.get_wall!(wall_id)
+            RedixPool.command(["SET", "wall_id_#{wall_id}", Poison.encode!(wall)])
+            {:ok, wall}
+          rescue
+            Ecto.NoResultsError -> {:error, false}
+          end
+
+        {:ok, value} ->
+          {:ok, Poison.decode!(value)}
+
+        {:error, error} ->
+          {:error, error}
+      end
+
+    with {:ok, _} <- user, {:ok, _} <- wall do
+      true
+    else
+      {:error, _} -> false
     end
   end
 end

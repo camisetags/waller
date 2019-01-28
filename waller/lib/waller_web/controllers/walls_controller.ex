@@ -43,6 +43,11 @@ defmodule WallerWeb.WallsController do
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{errors: error.errors})
+
+      {:error, errors} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: errors})
     end
   end
 

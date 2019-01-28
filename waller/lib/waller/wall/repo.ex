@@ -12,7 +12,10 @@ defmodule Waller.Wall.WallRepo do
 
   @votes_count_size 50
 
-  def get_wall!(id), do: Repo.get!(Wall, id)
+  def get_wall!(id) do
+    Repo.get!(Wall, id)
+    |> Ecto.assoc(:users)
+  end
 
   def form_wall(wall_params \\ %{}, wall_users) do
     %Wall{}
