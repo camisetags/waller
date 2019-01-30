@@ -13,6 +13,7 @@ defmodule WallerWeb.Router do
 
     get("/walls", WallsController, :index)
     post("/walls", WallsController, :create)
+    post("/walls/vote/:wall_id/to/:user_id", WallsController, :vote)
 
     options("/walls", WallsController, :options)
   end
