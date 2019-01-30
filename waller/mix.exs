@@ -5,11 +5,10 @@ defmodule Waller.MixProject do
     [
       app: :waller,
       version: "0.1.0",
-      elixir: "1.8.0",
+      elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
-      start_permanent: true,
-      # start_permanent: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps()
     ]
@@ -21,7 +20,7 @@ defmodule Waller.MixProject do
   def application do
     [
       mod: {Waller.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :scrivener_ecto]
     ]
   end
 
@@ -45,7 +44,9 @@ defmodule Waller.MixProject do
       {:poison, "~> 3.1"},
       {:redix, "~> 0.8.2"},
       {:poolboy, "~> 1.5.1"},
-      {:cors_plug, "~> 1.5"}
+      {:cors_plug, "~> 1.5"},
+      {:httpoison, "~> 1.4"},
+      {:scrivener_ecto, "~> 2.0"}
     ]
   end
 
