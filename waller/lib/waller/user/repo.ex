@@ -24,7 +24,7 @@ defmodule Waller.User.UserRepo do
   def list_user_in(ids) do
     User
     |> where([u], u.id in ^ids)
-    |> GenericRepo.all
+    |> GenericRepo.all()
   end
 
   @doc """
@@ -106,5 +106,11 @@ defmodule Waller.User.UserRepo do
   """
   def change_user(%User{} = user) do
     User.changeset(user, %{})
+  end
+
+  def first_three() do
+    User
+    |> limit(3)
+    |> GenericRepo.all()
   end
 end
