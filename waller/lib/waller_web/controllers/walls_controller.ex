@@ -32,6 +32,25 @@ defmodule WallerWeb.WallsController do
     |> form_wall(result, conn)
   end
 
+  def vote(conn, %{"wall_id" => wall_id, "user_id" => user_id}) do
+    case WallCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
+      {:ok, _} ->
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "Your vote was computed!"})
+
+      {:error, %Ecto.Changeset{} = error} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: error.errors})
+
+      {:error, errors} ->
+        conn
+        |> put_status(:unprocessable_entity)
+        |> json(%{errors: errors})
+    end
+  end
+
   defp form_wall(wall_users, _, conn) when length(wall_users) < 2 do
     conn
     |> put_status(:unprocessable_entity)
