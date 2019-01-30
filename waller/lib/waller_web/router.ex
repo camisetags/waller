@@ -11,6 +11,7 @@ defmodule WallerWeb.Router do
 
     resources("/users", UserController)
 
+    get("/walls", WallsController, :index)
     post("/walls", WallsController, :create)
 
     options("/walls", WallsController, :options)

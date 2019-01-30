@@ -53,6 +53,24 @@ defmodule WallerWeb.WallsControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
+  describe "index" do
+    setup [:generate_walls]
+
+    test "list all walls paginated", %{conn: conn} do
+      conn = get(conn, Routes.walls_path(conn, :index))
+      response_entries = json_response(conn, 200)["data"]["entries"]
+
+      assert length(response_entries) == 3
+    end
+
+    test "list only doubles walls", %{conn: conn} do
+      conn = get(conn, Routes.walls_path(conn, :index, only_doubles: true))
+      response_entries = json_response(conn, 200)["data"]["entries"]
+
+      assert length(response_entries) == 2
+    end
+  end
+
   describe "create" do
     setup [:generate_users]
 
