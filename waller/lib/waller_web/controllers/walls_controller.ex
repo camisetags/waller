@@ -11,6 +11,22 @@ defmodule WallerWeb.WallsController do
 
   action_fallback(WallerWeb.FallbackController)
 
+  def index(conn, params) do
+    case params do
+      %{"only_doubles" => "true"} ->
+        take_doubles(conn, page: 1)
+
+      %{"only_doubles" => "true", "page" => page} ->
+        take_doubles(conn, page: page)
+
+      %{"page" => page} ->
+        take_all(conn, page: page)
+
+      _ ->
+        take_all(conn, page: 1)
+    end
+  end
+
   def create(conn, %{"user_ids" => ids, "result_date" => result}) do
     UserRepo.list_user_in(ids)
     |> form_wall(result, conn)
@@ -49,6 +65,34 @@ defmodule WallerWeb.WallsController do
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{errors: error.errors})
+    end
+  end
+
+  defp take_doubles(conn, page: page) do
+    case WallRepo.list_doubles(page: page, page_size: 30) do
+      %Page{} = result ->
+        conn
+        |> put_status(:ok)
+        |> json(%{data: result})
+
+      _ ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: "An internal server error has occured."})
+    end
+  end
+
+  defp take_all(conn, page: page) do
+    case WallRepo.list(page: page, page_size: 30) do
+      %Page{} = result ->
+        conn
+        |> put_status(:ok)
+        |> json(%{data: result})
+
+      _ ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: "An internal server error has occured."})
     end
   end
 end
