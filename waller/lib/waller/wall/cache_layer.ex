@@ -27,7 +27,7 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   def list(page: page, page_size: page_size) do
-    cache_key = "list_doubles_#{page}_#{page_size}"
+    cache_key = "list_#{page}_#{page_size}"
 
     case RedixPool.command(["GET", cache_key]) do
       {:ok, nil} ->
