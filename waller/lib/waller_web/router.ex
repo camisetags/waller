@@ -26,5 +26,8 @@ defmodule WallerWeb.Router do
     pipe_through(:api)
 
     get("/", RootController, :index)
+    post("/verify-captcha", RootController, :verify_captcha)
+
+    options("/verify-captcha", RootController, :options)
   end
 end

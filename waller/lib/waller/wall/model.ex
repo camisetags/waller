@@ -3,10 +3,10 @@ defmodule Waller.Wall.UserWall do
   import Ecto.Changeset
 
   schema "users_walls" do
-    field(:user_id, :id)
-    field(:wall_id, :id)
+    field :user_id, :id
+    field :wall_id, :id
 
-    field(:votes, :integer, default: 0)
+    field :votes, :integer, default: 0
 
     timestamps()
   end
@@ -28,8 +28,8 @@ defmodule Waller.Wall.Wall do
 
   @derive {Poison.Encoder, except: [:__meta__]}
   schema "walls" do
-    field(:running, :boolean)
-    field(:result_date, :utc_datetime)
+    field :running, :boolean
+    field :result_date, :utc_datetime
 
     many_to_many(:users, User, join_through: UserWall)
 
