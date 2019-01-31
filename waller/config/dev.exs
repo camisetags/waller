@@ -56,8 +56,9 @@ config :waller, Waller.Repo,
   port: System.get_env("PGPORT") || 54322,
   pool_size: 10
 
-
-config :waller, Waller.RedixPool,
+config :waller, :redix_pool,
   host: System.get_env("REDIS_HOST") || "localhost",
   port: System.get_env("REDIS_PORT") || 6932,
   cache_time: System.get_env("REDIS_CACHE_TIME") || 10 * 60
+
+config :waller, :recaptcha_secret, "6Ldlm4UUAAAAAMwECDVBzSuncDBEw5A6EubInKyT"
