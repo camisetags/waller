@@ -13,12 +13,8 @@ defmodule Waller.Wall.WallRepo do
   @votes_count_size 50
 
   def get_wall!(id) do
-    try do
-      Repo.get!(Wall, id)
-      |> Repo.preload(:users)
-    rescue
-      Ecto.NoResultsError -> {:error, ["Wall does not exists."]}
-    end
+    Repo.get!(Wall, id)
+    |> Repo.preload(:users)
   end
 
   def form_wall(wall_params \\ %{}, wall_users) do
@@ -56,6 +52,15 @@ defmodule Waller.Wall.WallRepo do
     end
   end
 
+  def status(wall_id) do
+    complete_wall(wall_id)
+    |> Repo.all()
+    |> case do
+      [] -> {:error, ["There is no wall with this id"]}
+      wall_data -> build_complete_wall(wall_data)
+    end
+  end
+
   defp associate_user_to_wall(changeset, user_list) do
     Ecto.Changeset.put_assoc(changeset, :users, user_list)
   end
@@ -79,5 +84,37 @@ defmodule Waller.Wall.WallRepo do
     |> Repo.update()
 
     user_wall.votes
+  end
+
+  defp complete_wall(wall_id) do
+    from(wall in Wall,
+      join: user_wall in UserWall,
+      on: wall.id == user_wall.wall_id,
+      join: user in User,
+      on: user_wall.user_id == user.id,
+      where: wall.id == ^wall_id,
+      select: %{wall: wall, user: user, user_wall: user_wall}
+    )
+  end
+
+  defp build_complete_wall(query_result) do
+    [%{wall: wall, user: _, user_wall: _} | _] = query_result
+
+    %Wall{
+      id: wall.id,
+      running: wall.running,
+      result_date: wall.result_date,
+      users:
+        query_result
+        |> map(fn result ->
+          %{
+            id: result.user.id,
+            name: result.user.name,
+            photo: result.user.photo,
+            age: result.user.age,
+            votes: result.user_wall.votes
+          }
+        end)
+    }
   end
 end
