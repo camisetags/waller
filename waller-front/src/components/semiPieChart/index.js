@@ -46,8 +46,8 @@ class Chart extends React.Component {
       <Doughnut
         data={this.state.data}
         options={this.state.options}
-        width={50}
-        height={20}
+        width={40}
+        height={15}
       />
     );
   }
