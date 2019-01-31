@@ -9,6 +9,40 @@ defmodule Waller.Wall.CacheLayer do
   @votes_count_size 90
   @cache_time 5 * 60
 
+  def list_doubles(page: page, page_size: page_size) do
+    cache_key = "list_doubles_#{page}_#{page_size}"
+
+    case RedixPool.command(["GET", cache_key]) do
+      {:ok, nil} ->
+        result = WallRepo.list_doubles(page: page, page_size: page_size)
+        RedixPool.command(["SET", cache_key, Poison.encode!(result)])
+        {:ok, result}
+
+      {:ok, result} ->
+        {:ok, Poison.decode!(result)}
+
+      {:error, _} ->
+        {:error, ["An error has occured."]}
+    end
+  end
+
+  def list(page: page, page_size: page_size) do
+    cache_key = "list_doubles_#{page}_#{page_size}"
+
+    case RedixPool.command(["GET", cache_key]) do
+      {:ok, nil} ->
+        result = WallRepo.list(page: page, page_size: page_size)
+        RedixPool.command(["SET", cache_key, Poison.encode!(result)])
+        {:ok, result}
+
+      {:ok, result} ->
+        {:ok, Poison.decode!(result)}
+
+      {:error, _} ->
+        {:error, ["An error has occured."]}
+    end
+  end
+
   def status(wall_id) do
     case RedixPool.command(["GET", "status_#{wall_id}"]) do
       {:ok, nil} ->

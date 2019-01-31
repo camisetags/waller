@@ -125,13 +125,13 @@ defmodule WallerWeb.WallsController do
   end
 
   defp take_doubles(conn, page: page) do
-    case WallRepo.list_doubles(page: page, page_size: 30) do
-      %Page{} = result ->
+    case WallCacheLayer.list_doubles(page: page, page_size: 30) do
+      {:ok, result} ->
         conn
         |> put_status(:ok)
         |> json(%{data: result})
 
-      _ ->
+      {:error, _} ->
         conn
         |> put_status(:internal_server_error)
         |> json(%{errors: "An internal server error has occured."})
@@ -139,13 +139,13 @@ defmodule WallerWeb.WallsController do
   end
 
   defp take_all(conn, page: page) do
-    case WallRepo.list(page: page, page_size: 30) do
-      %Page{} = result ->
+    case WallCacheLayer.list(page: page, page_size: 30) do
+      {:ok, result} ->
         conn
         |> put_status(:ok)
         |> json(%{data: result})
 
-      _ ->
+      {:error, _} ->
         conn
         |> put_status(:internal_server_error)
         |> json(%{errors: "An internal server error has occured."})
