@@ -3,7 +3,6 @@ defmodule WallerWeb.WallsController do
 
   alias Ecto
   alias Waller.User.UserRepo
-  alias Scrivener.Page
 
   alias Waller.Wall.WallRepo
   alias Waller.Wall.Wall
