@@ -51,6 +51,25 @@ defmodule Waller.WallRepoTest do
       assert Enum.at(wall.users, 1).name == @user_attrs2.name
     end
 
+    test "send_vote/2" do
+      wall_fix = wall_fixture()
+      user = Enum.at(wall_fix.users, 0)
+
+      assert {:ok, 0} = WallRepo.send_vote(%{user_id: user.id, wall_id: wall_fix.id})
+    end
+
+    test "close_wall/1" do
+      wall_fix = wall_fixture()
+      assert {:ok, %Wall{}} = WallRepo.close_wall(wall_fix.id)
+    end
+
+    test "status/1" do
+      wall_fix = wall_fixture()
+      result = WallRepo.status(wall_fix.id)
+
+      assert wall_fix.id == result.id
+    end
+
     test "list/1" do
       wall_fix = wall_fixture()
       result = WallRepo.list(page: 1, page_size: 1)
