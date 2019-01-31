@@ -56,6 +56,25 @@ defmodule WallerWeb.WallsController do
     end
   end
 
+  def close(conn, %{"wall_id" => wall_id}) do
+    case WallRepo.close_wall(wall_id) do
+      {:ok, _} ->
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "The wall were closed"})
+
+      {:error, ["Wall does not exists."]} ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{errors: ["Wall does not exists."]})
+
+      {:error, error} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: error})
+    end
+  end
+
   def status(conn, %{"wall_id" => wall_id}) do
     with %Wall{} = wall <- WallCacheLayer.status(wall_id) do
       conn

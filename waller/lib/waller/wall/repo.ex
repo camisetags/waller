@@ -24,6 +24,34 @@ defmodule Waller.Wall.WallRepo do
     |> Repo.insert()
   end
 
+  def send_vote(%{wall_id: wall_id, user_id: user_id}, votes_count \\ @votes_count_size) do
+    wall_with_user_wall(%{wall_id: wall_id, user_id: user_id})
+    |> Repo.all()
+    |> case do
+      [{user_wall, wall}] -> {:ok, persist_vote({user_wall, wall}, votes_count)}
+      [] -> {:error, ["This wall or participant does not exists."]}
+    end
+  end
+
+  def close_wall(wall_id) do
+    try do
+      get_wall!(wall_id)
+      |> Wall.changeset(%{running: false})
+      |> Repo.update()
+    rescue
+      Ecto.NoResultsError -> {:error, ["Wall does not exists."]}
+    end
+  end
+
+  def status(wall_id) do
+    complete_wall(wall_id)
+    |> Repo.all()
+    |> case do
+      [] -> {:error, ["There is no wall with this id"]}
+      wall_data -> build_complete_wall(wall_data)
+    end
+  end
+
   def list(page: page, page_size: page_size) do
     from(w in Wall, preload: [:users])
     |> Repo.paginate(page: page, page_size: page_size)
@@ -43,47 +71,8 @@ defmodule Waller.Wall.WallRepo do
     |> Repo.paginate(page: page, page_size: page_size)
   end
 
-  def send_vote(%{wall_id: wall_id, user_id: user_id}, votes_count \\ @votes_count_size) do
-    wall_with_user_wall(%{wall_id: wall_id, user_id: user_id})
-    |> Repo.all()
-    |> case do
-      [{user_wall, wall}] -> {:ok, persist_vote({user_wall, wall}, votes_count)}
-      [] -> {:error, ["This wall or participant does not exists."]}
-    end
-  end
-
-  def status(wall_id) do
-    complete_wall(wall_id)
-    |> Repo.all()
-    |> case do
-      [] -> {:error, ["There is no wall with this id"]}
-      wall_data -> build_complete_wall(wall_data)
-    end
-  end
-
   defp associate_user_to_wall(changeset, user_list) do
     Ecto.Changeset.put_assoc(changeset, :users, user_list)
-  end
-
-  defp wall_with_user_wall(%{user_id: user_id, wall_id: wall_id}) do
-    from(user_wall in UserWall,
-      join: wall in Wall,
-      on: user_wall.wall_id == wall.id,
-      where: user_wall.user_id == ^user_id and user_wall.wall_id == ^wall_id,
-      select: {user_wall, wall}
-    )
-  end
-
-  defp persist_vote({_, %{running: running}}, _) when not running do
-    {:error, ["This wall is not running anymore..."]}
-  end
-
-  defp persist_vote({%UserWall{} = user_wall, _}, votes_count) do
-    user_wall
-    |> UserWall.changeset(%{votes: user_wall.votes + votes_count})
-    |> Repo.update()
-
-    user_wall.votes
   end
 
   defp complete_wall(wall_id) do
@@ -94,6 +83,15 @@ defmodule Waller.Wall.WallRepo do
       on: user_wall.user_id == user.id,
       where: wall.id == ^wall_id,
       select: %{wall: wall, user: user, user_wall: user_wall}
+    )
+  end
+
+  defp wall_with_user_wall(%{user_id: user_id, wall_id: wall_id}) do
+    from(user_wall in UserWall,
+      join: wall in Wall,
+      on: user_wall.wall_id == wall.id,
+      where: user_wall.user_id == ^user_id and user_wall.wall_id == ^wall_id,
+      select: {user_wall, wall}
     )
   end
 
@@ -116,5 +114,17 @@ defmodule Waller.Wall.WallRepo do
           }
         end)
     }
+  end
+
+  defp persist_vote({_, %{running: running}}, _) when not running do
+    {:error, ["This wall is not running anymore..."]}
+  end
+
+  defp persist_vote({%UserWall{} = user_wall, _}, votes_count) do
+    user_wall
+    |> UserWall.changeset(%{votes: user_wall.votes + votes_count})
+    |> Repo.update()
+
+    user_wall.votes
   end
 end

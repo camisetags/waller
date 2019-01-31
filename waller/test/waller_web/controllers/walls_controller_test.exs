@@ -134,14 +134,14 @@ defmodule WallerWeb.WallsControllerTest do
       assert response["message"] == "Your vote was computed!"
     end
 
-    test "error if user or wall does not exists", %{conn: conn} do
-      conn = post(conn, Routes.walls_path(conn, :vote, 2_344_345, 1_029_380))
+    test "error if wall does not exists", %{conn: conn} do
+      conn = post(conn, Routes.walls_path(conn, :vote, 2_344_349, 1_029_380))
       response = json_response(conn, 422)
 
       assert response["errors"] == ["Wall does not exist."]
     end
 
-    test "error if user or user does not exists", %{conn: conn} do
+    test "error if user does not exists", %{conn: conn} do
       page = WallRepo.list(page: 1, page_size: 1)
       wall = Enum.at(page.entries, 0)
 
@@ -149,6 +149,27 @@ defmodule WallerWeb.WallsControllerTest do
       response = json_response(conn, 422)
 
       assert response["errors"] == ["User does not exist."]
+    end
+  end
+
+  describe "close" do
+    setup [:generate_walls]
+
+    test "closes an existing wall", %{conn: conn} do
+      page = WallRepo.list(page: 1, page_size: 1)
+      wall = Enum.at(page.entries, 0)
+
+      conn = post(conn, Routes.walls_path(conn, :close, wall.id))
+      response = json_response(conn, 200)
+
+      assert response["message"] == "The wall were closed"
+    end
+
+    test "retrieves an error if the wall does not exists", %{conn: conn} do
+      conn = post(conn, Routes.walls_path(conn, :close, 1_203_897))
+      response = json_response(conn, 404)
+
+      assert response["errors"] == ["Wall does not exists."]
     end
   end
 
