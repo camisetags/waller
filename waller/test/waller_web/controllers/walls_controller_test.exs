@@ -138,7 +138,38 @@ defmodule WallerWeb.WallsControllerTest do
       conn = post(conn, Routes.walls_path(conn, :vote, 2_344_345, 1_029_380))
       response = json_response(conn, 422)
 
-      assert response["errors"] == ["Wall or user does not exists."]
+      assert response["errors"] == ["Wall does not exist."]
+    end
+
+    test "error if user or user does not exists", %{conn: conn} do
+      page = WallRepo.list(page: 1, page_size: 1)
+      wall = Enum.at(page.entries, 0)
+
+      conn = post(conn, Routes.walls_path(conn, :vote, wall.id, 1_029_380))
+      response = json_response(conn, 422)
+
+      assert response["errors"] == ["User does not exist."]
+    end
+  end
+
+  describe "status" do
+    setup [:generate_walls]
+
+    test "shows walls status", %{conn: conn} do
+      page = WallRepo.list(page: 1, page_size: 1)
+      wall = Enum.at(page.entries, 0)
+
+      conn = get(conn, Routes.walls_path(conn, :status, wall.id))
+      response = json_response(conn, 200)
+
+      assert response["data"]["id"] == wall.id
+    end
+
+    test "retrieves an error when wall does not exists", %{conn: conn} do
+      conn = get(conn, Routes.walls_path(conn, :status, 102_938))
+      response = json_response(conn, 500)
+
+      assert response["errors"] == ["There is no wall with this id"]
     end
   end
 

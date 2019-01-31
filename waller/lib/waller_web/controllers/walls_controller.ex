@@ -33,12 +33,17 @@ defmodule WallerWeb.WallsController do
   end
 
   def vote(conn, %{"wall_id" => wall_id, "user_id" => user_id}) do
-    case WallCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id}) do
-      {:ok, _} ->
-        conn
-        |> put_status(:ok)
-        |> json(%{message: "Your vote was computed!"})
+    user_or_wall_exists =
+      WallCacheLayer.check_wall_or_user_exists(wall_id: wall_id, user_id: user_id)
 
+    vote_sent = WallCacheLayer.send_vote(%{wall_id: wall_id, user_id: user_id})
+
+    with {:ok, true} <- user_or_wall_exists,
+         {:ok, _} <- vote_sent do
+      conn
+      |> put_status(:ok)
+      |> json(%{message: "Your vote was computed!"})
+    else
       {:error, %Ecto.Changeset{} = error} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -48,6 +53,19 @@ defmodule WallerWeb.WallsController do
         conn
         |> put_status(:unprocessable_entity)
         |> json(%{errors: errors})
+    end
+  end
+
+  def status(conn, %{"wall_id" => wall_id}) do
+    with %Wall{} = wall <- WallCacheLayer.status(wall_id) do
+      conn
+      |> put_status(:ok)
+      |> json(%{data: wall})
+    else
+      {:error, error} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{errors: error})
     end
   end
 
