@@ -34,12 +34,32 @@ services:
       REDIS_HOST: 'redis'
       REDIS_PORT: 6979
       REDIS_CACHE_TIME: 600
+
+      ALLOWED_HOST: 'http"//front:5000'
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
       - '4000:4000'
-    # volumes:
-    #   - ./:/app/
-    # working_dir: /app
     depends_on:
       - database
       - redis
+    # USE THIS OPTIONS WHEN WORKING ON DEV MODE
+    # volumes:
+    #   - ./:/app/
+    # working_dir: /app
+
+  front:
+    container_name: front
+    build: ./waller-front
+    environment:
+      API_URL: http://phoenix:4000
+      RECAPTCHA_KEY: 6Ldlm4UUAAAAAGLrxcMRgCl1X965NY0W2ikpZi5z
+    ports:
+      - '5000:5000'
+    depends_on:
+      - phoenix
+    # USE THIS OPTIONS WHEN WORKING ON DEV MODE
+    # restart: always
+    # tty: true
+    # volumes:
+    #   - ./:/app/
+    # working_dir: /app

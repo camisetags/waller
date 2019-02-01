@@ -2,7 +2,6 @@ defmodule Waller.Wall.CacheLayer do
   import Enum, only: [map: 2]
 
   alias Waller.Wall.WallRepo
-  alias Waller.RedixPool
   alias Waller.Wall.Wall
   alias Waller.User.UserRepo
 
@@ -12,10 +11,10 @@ defmodule Waller.Wall.CacheLayer do
   def list_doubles(page: page, page_size: page_size) do
     cache_key = "list_doubles_#{page}_#{page_size}"
 
-    case RedixPool.command(["GET", cache_key]) do
+    case Redix.command(:redix, ["GET", cache_key]) do
       {:ok, nil} ->
         result = WallRepo.list_doubles(page: page, page_size: page_size)
-        RedixPool.command(["SET", cache_key, Poison.encode!(result)])
+        Redix.command(:redix, ["SET", cache_key, Poison.encode!(result)])
         {:ok, result}
 
       {:ok, result} ->
@@ -29,10 +28,10 @@ defmodule Waller.Wall.CacheLayer do
   def list(page: page, page_size: page_size) do
     cache_key = "list_#{page}_#{page_size}"
 
-    case RedixPool.command(["GET", cache_key]) do
+    case Redix.command(:redix, ["GET", cache_key]) do
       {:ok, nil} ->
         result = WallRepo.list(page: page, page_size: page_size)
-        RedixPool.command(["SET", cache_key, Poison.encode!(result)])
+        Redix.command(:redix, ["SET", cache_key, Poison.encode!(result)])
         {:ok, result}
 
       {:ok, result} ->
@@ -44,7 +43,7 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   def status(wall_id) do
-    case RedixPool.command(["GET", "status_#{wall_id}"]) do
+    case Redix.command(:redix, ["GET", "status_#{wall_id}"]) do
       {:ok, nil} ->
         WallRepo.status(wall_id)
         |> set_status_cache()
@@ -67,7 +66,7 @@ defmodule Waller.Wall.CacheLayer do
 
     if votes_count === @votes_count_size do
       set_mem_votes(cache_key, 0)
-      RedixPool.command(["DEL", "status_#{wall_id}"])
+      Redix.command(:redix, ["DEL", "status_#{wall_id}"])
 
       persist_vote(%{wall_id: wall_id, user_id: user_id}, votes_count)
     else
@@ -95,7 +94,7 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   defp set_mem_votes(cache_key, votes_count) do
-    with {:ok, "OK"} <- RedixPool.command(["SET", cache_key, votes_count]) do
+    with {:ok, "OK"} <- Redix.command(:redix, ["SET", cache_key, votes_count]) do
       {:ok, votes_count}
     else
       {:error, error} -> {:error, error}
@@ -111,12 +110,12 @@ defmodule Waller.Wall.CacheLayer do
     encoded_value = Poison.encode(status) |> elem(1)
 
     status =
-      case RedixPool.command(["SET", cache_key, encoded_value]) do
+      case Redix.command(:redix, ["SET", cache_key, encoded_value]) do
         {:ok, "OK"} -> status
         {:error, error} -> {:error, error}
       end
 
-    RedixPool.command(["EXPIRE", cache_key, @cache_time])
+    Redix.command(:redix, ["EXPIRE", cache_key, @cache_time])
 
     status
   end
@@ -152,7 +151,7 @@ defmodule Waller.Wall.CacheLayer do
   defp votes_from_mem(%{wall_id: wall_id, user_id: user_id}) do
     cache_key = "votes_from_mem_#{wall_id}_#{user_id}"
 
-    case RedixPool.command(["GET", cache_key]) do
+    case Redix.command(:redix, ["GET", cache_key]) do
       {:ok, nil} -> 0
       {:ok, "0"} -> 0
       {:ok, value} -> Integer.parse(value) |> elem(0)
@@ -161,11 +160,11 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   defp get_user(user_id) do
-    case RedixPool.command(["GET", "user_id_#{user_id}"]) do
+    case Redix.command(:redix, ["GET", "user_id_#{user_id}"]) do
       {:ok, nil} ->
         try do
           user = UserRepo.get_user!(user_id)
-          RedixPool.command(["SET", "user_id_#{user_id}", Poison.encode!(user)])
+          Redix.command(:redix, ["SET", "user_id_#{user_id}", Poison.encode!(user)])
           {:ok, user}
         rescue
           Ecto.NoResultsError -> {:error, ["User does not exist."]}
@@ -180,11 +179,11 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   defp get_wall(wall_id) do
-    case RedixPool.command(["GET", "wall_id_#{wall_id}"]) do
+    case Redix.command(:redix, ["GET", "wall_id_#{wall_id}"]) do
       {:ok, nil} ->
         try do
           wall = WallRepo.get_wall!(wall_id)
-          RedixPool.command(["SET", "wall_id_#{wall_id}", Poison.encode!(wall)])
+          Redix.command(:redix, ["SET", "wall_id_#{wall_id}", Poison.encode!(wall)])
           {:ok, wall}
         rescue
           Ecto.NoResultsError -> {:error, ["Wall does not exist."]}

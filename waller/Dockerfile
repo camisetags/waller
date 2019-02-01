@@ -15,8 +15,11 @@ RUN mix local.hex --force
 # RUN chmod 777 /app/entrypoint.sh
 RUN chmod +x entrypoint.sh
 
+RUN mix deps.get --force
+
 # Compile the project
-RUN mix do compile
+RUN mix local.rebar --force
+RUN mix do compile --force
 
 RUN ls -a
 

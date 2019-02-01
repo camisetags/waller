@@ -5,6 +5,9 @@ defmodule Waller.Application do
 
   use Application
 
+  @redix_host Application.get_env(:waller, :redix_pool)[:host]
+  @redix_port Application.get_env(:waller, :redix_pool)[:port]
+
   def start(_type, _args) do
     # List all child processes to be supervised
     children = [
@@ -14,7 +17,10 @@ defmodule Waller.Application do
       WallerWeb.Endpoint,
       # Starts a worker by calling: Waller.Worker.start_link(arg)
       # {Waller.Worker, arg},
-      Waller.RedixPool
+      # Waller.RedixPool
+      {Redix, host: @redix_host, port: @redix_port, name: :redix}
+      # {Redix, host: "redis://#{@redix_host}:#{@redix_port}/", name: :redix}
+      # {Redix, host: "redis://#{@redix_host}:#{@redix_port}/", name: :redix}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
