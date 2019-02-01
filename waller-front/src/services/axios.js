@@ -8,7 +8,9 @@ const axiosInstance = axios.create({
     'Access-Control-Allow-Origin': '*',
     'Content-Type': 'application/json'
   },
-  adapter: cacheAdapterEnhancer(axios.defaults.adapter)
+  adapter: cacheAdapterEnhancer(axios.defaults.adapter, {
+    enabledByDefault: false
+  })
 });
 
 window.axios = axiosInstance;
