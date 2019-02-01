@@ -15,15 +15,25 @@ services:
     ports:
       - 54322:5432
 
+  redis:
+    container_name: redis
+    image: redis:5.0.3
+    ports:
+      - 6379:6379
+
   phoenix:
     container_name: phoenix
-    build: .
+    build: ./waller
     environment:
-      PGUSER: postgres
-      PGPASSWORD: postgres
-      PGDATABASE: waller_database
+      PGUSER: 'postgres'
+      PGPASSWORD: 'postgres'
+      PGDATABASE: 'waller_database'
       PGPORT: 5432
-      PGHOST: database
+      PGHOST: 'database'
+      # Redis configs
+      REDIS_HOST: 'redis'
+      REDIS_PORT: 6979
+      REDIS_CACHE_TIME: 600
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
       - '4000:4000'
@@ -33,21 +43,3 @@ services:
     depends_on:
       - database
       - redis
-
-  redis:
-    container_name: redis
-    image: redis:5.0.3
-    ports:
-      - 6379:6379
-  # phoenix:
-  #   build: .
-  #   environment:
-  #     PGUSER: postgres
-  #     PGPASSWORD: postgres
-  #     PGDATABASE: database_name
-  #     PGPORT: 5432
-  #     PGHOST: database
-  #   ports:
-  #     - '4000:4000'
-  #   depends_on:
-  #     - database

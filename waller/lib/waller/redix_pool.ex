@@ -8,6 +8,8 @@ defmodule Waller.RedixPool do
   end
 
   def init([]) do
+    IO.inspect(@redis_connection_params)
+
     pool_opts = [
       name: {:local, :redix_poolboy},
       worker_module: Redix,

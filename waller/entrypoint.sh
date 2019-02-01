@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Docker entrypoint script.
 
 # Wait until Postgres is ready

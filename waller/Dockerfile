@@ -13,11 +13,11 @@ WORKDIR /app
 # By using --force, we don’t need to type “Y” to confirm the installation
 RUN mix local.hex --force
 # RUN chmod 777 /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+RUN chmod +x entrypoint.sh
 
 # Compile the project
 RUN mix do compile
 
 RUN ls -a
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
