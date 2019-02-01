@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: 'postgres'
       POSTGRES_PASSWORD: 'postgres'
-      POSTGRES_DB: 'database_name'
+      POSTGRES_DB: 'waller_database'
       PGDATA: '/var/lib/postgresql/data'
       PGCLIENTENCODING: 'UTF8'
     volumes:
@@ -17,19 +17,19 @@ services:
 
   phoenix:
     container_name: phoenix
-    image: elixir:1.7.4-alpine
+    build: .
     environment:
       PGUSER: postgres
       PGPASSWORD: postgres
-      PGDATABASE: database_name
+      PGDATABASE: waller_database
       PGPORT: 5432
       PGHOST: database
     ports:
       # Mapping the port to make the Phoenix app accessible outside of the container
-      - '4002:4000'
-    volumes:
-      - ./:/app/
-    working_dir: /app
+      - '4000:4000'
+    # volumes:
+    #   - ./:/app/
+    # working_dir: /app
     depends_on:
       - database
       - redis
