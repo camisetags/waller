@@ -57,7 +57,7 @@ config :waller, Waller.Repo,
   pool_size: 10
 
 config :waller, :redix_pool,
-  host: System.get_env("REDIS_HOST") || "localhost",
+  host: "redis",
   port: System.get_env("REDIS_PORT") || 6379,
   cache_time: System.get_env("REDIS_CACHE_TIME") || 10 * 60
 

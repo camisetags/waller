@@ -1,34 +1,36 @@
 import React, { Fragment } from 'react';
-import moment from 'moment';
 import Header from '../../components/header';
 import Divisor from '../../components/divisor';
 import UserImage from '../../components/userImage';
 import wallService from '../../services/wall';
 import SemiPieChart from '../../components/semiPieChart';
+
+import { calcDiffDate } from '../../utils';
+
 import './style.scss';
 
 class Percentage extends React.Component {
   state = {
     users: [],
     votedUser: {},
-    wall: {
-      result_date: null
-    }
+    totalVotes: null,
+
+    diffDateUnity: 'dias',
+    diffDate: 0
   };
 
   componentDidMount() {
-    wallService
-      .getWall(this.props.match.params.wall_id)
-      .then(response => this.setUsersState(response.data));
+    wallService.getWall(this.props.match.params.wall_id).then(response => {
+      this.setUsersState(response.data);
+      this.diffDate(response.data.result_date);
+    });
   }
 
   setUsersState(data) {
-    const { users, ...wall } = data;
+    const { users, total_votes } = data;
 
     this.setState({
-      wall: {
-        result_date: wall.result_date
-      },
+      totalVotes: total_votes,
       users,
       votedUser: users.find(
         user => user.id === parseInt(this.props.match.params.voted_user)
@@ -37,31 +39,19 @@ class Percentage extends React.Component {
   }
 
   diffDate(result) {
-    const resultDate = moment(new Date(result));
-    const dateNow = moment(new Date());
-    const diffDays = resultDate.diff(dateNow, 'days');
+    const resultDate = new Date(result);
+    const dateNow = new Date();
 
-    return this.diffElement({ diffDays, dateNow, resultDate });
-  }
+    const { diffDateUnity, diffDate } = calcDiffDate({ dateNow, resultDate });
 
-  diffElement({ diffDays, dateNow, resultDate }) {
-    const diffHours = diffDays === 1 ? resultDate.diff(dateNow, 'hours') : null;
-    const diffUnity = diffDays <= 1 ? diffHours : diffDays;
-    const diffUnityString = diffDays <= 1 ? 'horas' : 'dias';
-
-    return (
-      <div className="result-date">
-        Restam
-        <div className="result-day">
-          <b>{diffUnity}</b>
-        </div>
-        {diffUnityString} para encerrar a votação
-      </div>
-    );
+    this.setState({
+      diffDate,
+      diffDateUnity
+    });
   }
 
   render() {
-    const { users, votedUser } = this.state;
+    const { users, votedUser, totalVotes } = this.state;
     const { wall_id: wallID } = this.props.match.params;
 
     return (
@@ -84,10 +74,16 @@ class Percentage extends React.Component {
             </div>
 
             <div className="chart">
-              <SemiPieChart users={users} />
+              <SemiPieChart users={users} totalVotes={totalVotes} />
             </div>
 
-            {this.diffDate(this.state.wall.result_date)}
+            <div className="result-date">
+              Restam
+              <div className="result-day">
+                <b>{this.state.diffDate}</b>
+              </div>
+              {this.state.diffDateUnity} para encerrar a votação
+            </div>
           </div>
         </div>
       </Fragment>

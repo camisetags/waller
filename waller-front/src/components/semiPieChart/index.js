@@ -7,7 +7,15 @@ class Chart extends React.Component {
     options: {
       circumference: Math.PI * 1.2,
       cutoutPercentage: 80,
-      rotation: -1.1 * Math.PI
+      rotation: -1.1 * Math.PI,
+      legend: {
+        display: false
+      },
+      tooltips: {
+        callbacks: {
+          label: this.tooltipLabelCallback
+        }
+      }
     },
 
     data: {
@@ -22,11 +30,11 @@ class Chart extends React.Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    if (props.users) {
-      const totalVotes = props.users.reduce((sum, curr) => sum + curr.votes);
-      const userVotesPercentage = props.users.map(
-        user => (user.votes * totalVotes) / 100
-      );
+    if (props.users && props.totalVotes) {
+      const userVotesPercentage = props.users.map(user => {
+        return Math.round((user.votes / props.totalVotes) * 100);
+      });
+
       return {
         ...state,
         data: {
@@ -43,6 +51,13 @@ class Chart extends React.Component {
     return {
       ...state
     };
+  }
+
+  tooltipLabelCallback(tooltipItem, data) {
+    const dataIndex = tooltipItem.index;
+    const userPercentage = data.datasets[0].data[dataIndex];
+
+    return `${data.labels[dataIndex]}: ${userPercentage}%`;
   }
 
   render() {
