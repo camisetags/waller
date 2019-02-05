@@ -51,14 +51,35 @@ config :phoenix, :plug_init_mode, :runtime
 config :waller, Waller.Repo,
   username: System.get_env("PGUSER") || "postgres",
   password: System.get_env("PGPASSWORD") || "postgres",
-  database: System.get_env("PGDATABASE") || "database_name",
+  database: System.get_env("PGDATABASE") || "waller_database",
   hostname: System.get_env("PGHOST") || "localhost",
   port: System.get_env("PGPORT") || 54322,
   pool_size: 10
 
 config :waller, :redix_pool,
-  host: System.get_env("REDIS_HOST") || "localhost",
-  port: System.get_env("REDIS_PORT") || 6932,
+  host: "redis",
+  port: System.get_env("REDIS_PORT") || 6379,
   cache_time: System.get_env("REDIS_CACHE_TIME") || 10 * 60
 
 config :waller, :recaptcha_secret, "6Ldlm4UUAAAAAMwECDVBzSuncDBEw5A6EubInKyT"
+
+config :cors_plug,
+  origin: ["*"],
+  max_age: 86400,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  headers: [
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "User-Agent",
+    "DNT",
+    "Cache-Control",
+    "X-Mx-ReqToken",
+    "Keep-Alive",
+    "X-Requested-With",
+    "If-Modified-Since",
+    "X-CSRF-Token",
+    "Access-Control-Allow-Origin"
+  ],
+  send_preflight_response?: true

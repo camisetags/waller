@@ -1,8 +1,11 @@
 ## Gabriel Seixas
+
 **Globo.com: coding challenge**
 
 ====================
+
 #### Considerações Gerais
+
 Você deverá usar este repositório como o repo principal do projeto, i.e.,
 todos os seus commits devem estar registrados aqui, pois queremos ver como
 você trabalha.
@@ -12,7 +15,7 @@ Esse problema tem algumas constraints:
 a) Eu preciso conseguir rodar seu código em um Mac OS X OU no Ubuntu;
 
 b) Devemos ser capazes de executar o seu código em uma VM ou máquina limpa com
-   os seguintes comandos, ou algo similar:
+os seguintes comandos, ou algo similar:
 
     git clone seu-repositorio
     cd seu-repositorio
@@ -38,6 +41,7 @@ deploy e instalação, etc. Crie um único arquivo COMMENTS.md ou HISTORY.md no
 repositório para isso.
 
 =====================
+
 #### O Problema
 
 O problema que você deve resolver é o problema da votação do paredão do BBB em
@@ -57,6 +61,7 @@ o usuário recebe uma tela com o comprovante do sucesso e um panorama percentual
 dos votos por candidato até aquele momento.
 
 ============================
+
 #### Regras de negócio
 
 1. Os usuários podem votar quantas vezes quiserem, independente da opção
@@ -65,7 +70,7 @@ dos votos por candidato até aquele momento.
 
 2. A votação é chamada na TV em horário nobre, com isso, é esperado um enorme
    volume de votos concentrados em um curto espaço de tempo. Esperamos ter um
-   teste disso, e por razões práticas, podemos considerar 1000 votos/seg como 
+   teste disso, e por razões práticas, podemos considerar 1000 votos/seg como
    baseline de performance deste teste.
 
 3. A produção do programa gostaria de ter URLs (a serem especificadas) para
@@ -77,8 +82,8 @@ dos votos por candidato até aquele momento.
    produto é algo bem importante. Organize seu tempo para que esse item também
    tenha a atenção mínima esperada.
 
-
 ===============================================
+
 #### O que será avaliado na sua solução?
 
 1. Seu código será observado por uma equipe de desenvolvedores que avaliarão a
@@ -96,6 +101,7 @@ dos votos por candidato até aquele momento.
    da aplicação.
 
 =============
+
 #### Dicas
 
 - Use ferramentas e bibliotecas open-source, mas documente as decisões e
@@ -104,3 +110,73 @@ dos votos por candidato até aquele momento.
 - Automatize o máximo possível;
 
 - Em caso de dúvidas, pergunte.
+
+# Respostas para solução
+
+## Linguagem Elixir
+
+Tomei a decisão de escolher elixir por ser uma linguagem de alta concorrência, tolerante a falhas
+e de simples entendimento (com sua sintax derivando de ruby).
+
+## Redis para cache e soma dos votos
+
+Por ser uma API que necessita de bastante desempenho, decidi colocar as requisições normais de listagem
+e de dados simples com cache no redis. As requisições para votação eu escolhi por receber as votações
+em cache, depois de determinado número de votos somados (configurável por código), o dado finalmente
+é inserido no banco com a quantidade somada de votos. Assim eu garanto que não ocorrerão muitos acessos
+de escrita no banco.
+
+## Postgres como banco de dados
+
+Por se tratar de um sistema com relacionamentos simples e o Postgres sendo um banco de dados para diversos
+problemas genéricos, achei uma boa escolha para parte de persistência dos dados.
+
+## React + bootstrap + sass
+
+Por React ser uma lib com muito suporte da comunidade, estár madura para desenvolvimento e ter padrões de fácil
+entendimento, acaba se tornamdo uma das melhores opções no desenvolvimento front-end.
+Escolhi bootstrap como lib para auxílir no desenvolvimento da interface gráfica devido ao layout possuir elementos
+bem semelhante parecidos com os do bootrap.
+A escolha do Sass se deu por ser uma forma muito mais fácil de entender css e ser de conhecimento por grande parte do
+mercado de front-end.
+
+# Configuração, build e testes
+
+Antes de mais nada, instale o docker na sua máquina pelo [link](https://docs.docker.com/install/). Logo em seguida siga os passos abaixo para configurar e rodar o projeto.
+
+## Configure
+
+Rode os seguintes comandos para clonar, entrar no diretório do projeto, dar permissão ao arguivo e rodar o comando de configurações:
+
+```
+  git clone git@github.com:SelecaoGlobocom/gabriel-seixas.git
+  cd gabriel-seixas
+  sudo chmod 775 manage.py
+  ./manage.py configure
+```
+
+## Run
+
+Rode o seguinte comando para rodar o projeto:
+
+```
+  ./manage.py start
+```
+
+Abra o navegador e entre no http://localhost:5000
+
+## Testes
+
+Com elixir instalado na máquina ([MacOS ou Linux](https://elixir-lang.org/install.html)), use o seguinte comando
+para levantar apénas os containers do postgres e do redis:
+
+```
+  docker-compose up -d database redis
+```
+
+Em seguida rode os comandos para instalar as dependências e rodar os testes:
+
+```
+  mix deps.get
+  mix tests
+```

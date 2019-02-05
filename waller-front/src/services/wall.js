@@ -2,7 +2,9 @@ import axiosInstance from './axios';
 
 const wallService = {
   async getDoublesWalls() {
-    const response = await axiosInstance.get('/api/walls?only_doubles=true');
+    const response = await axiosInstance.get('/api/walls?only_doubles=true', {
+      cache: true
+    });
     return response.data;
   },
 

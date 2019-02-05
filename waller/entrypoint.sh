@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Docker entrypoint script.
 
 # Wait until Postgres is ready
@@ -17,4 +17,5 @@ if [[ -z `psql -Atqc "\\list $PGDATABASE"` ]]; then
   echo "Database $PGDATABASE created."
 fi
 
+mix ecto.setup
 exec mix phx.server

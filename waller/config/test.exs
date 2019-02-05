@@ -19,8 +19,8 @@ config :waller, Waller.Repo,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :waller, :redix_pool,
-  host: System.get_env("REDIS_HOST") || "localhost",
-  port: System.get_env("REDIS_PORT") || 6932,
+  host: "redis",
+  port: System.get_env("REDIS_PORT") || 6379,
   cache_time: System.get_env("REDIS_CACHE_TIME") || 10 * 60
 
 config :waller, :recaptcha_secret, "6Ldlm4UUAAAAAMwECDVBzSuncDBEw5A6EubInKyT"
