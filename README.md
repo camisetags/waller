@@ -163,6 +163,8 @@ Rode o seguinte comando para rodar o projeto:
   ./manage.py start
 ```
 
+Abra o navegador e entre no http://localhost:5000
+
 ## Testes
 
 Com elixir instalado na máquina ([MacOS ou Linux](https://elixir-lang.org/install.html)), use o seguinte comando
