@@ -19,8 +19,6 @@ defmodule Waller.Application do
       # {Waller.Worker, arg},
       # Waller.RedixPool
       {Redix, host: @redix_host, port: @redix_port, name: :redix}
-      # {Redix, host: "redis://#{@redix_host}:#{@redix_port}/", name: :redix}
-      # {Redix, host: "redis://#{@redix_host}:#{@redix_port}/", name: :redix}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

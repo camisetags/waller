@@ -12,7 +12,7 @@ class Percentage extends React.Component {
     users: [],
     votedUser: {},
     wall: {
-      result_date: ''
+      result_date: null
     }
   };
 
@@ -24,11 +24,10 @@ class Percentage extends React.Component {
 
   setUsersState(data) {
     const { users, ...wall } = data;
-    const diffDate = this.diffDate(wall.result_date);
 
     this.setState({
       wall: {
-        result_date: diffDate
+        result_date: wall.result_date
       },
       users,
       votedUser: users.find(
@@ -40,18 +39,30 @@ class Percentage extends React.Component {
   diffDate(result) {
     const resultDate = moment(new Date(result));
     const dateNow = moment(new Date());
-    const dateDiff = moment.duration(resultDate.diff(dateNow));
+    const diffDays = resultDate.diff(dateNow, 'days');
 
-    // const timeDiff = Math.abs(resultDate - dateNow) / 36e5;
-    // const dateDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-    return dateDiff.asHours();
+    return this.diffElement({ diffDays, dateNow, resultDate });
+  }
+
+  diffElement({ diffDays, dateNow, resultDate }) {
+    const diffHours = diffDays === 1 ? resultDate.diff(dateNow, 'hours') : null;
+    const diffUnity = diffDays <= 1 ? diffHours : diffDays;
+    const diffUnityString = diffDays <= 1 ? 'horas' : 'dias';
+
+    return (
+      <div className="result-date">
+        Restam
+        <div className="result-day">
+          <b>{diffUnity}</b>
+        </div>
+        {diffUnityString} para encerrar a votação
+      </div>
+    );
   }
 
   render() {
     const { users, votedUser } = this.state;
     const { wall_id: wallID } = this.props.match.params;
-
-    console.log(this.state.wall);
 
     return (
       <Fragment>
@@ -76,7 +87,7 @@ class Percentage extends React.Component {
               <SemiPieChart users={users} />
             </div>
 
-            <div className="result-date">{this.state.wall.result_date}</div>
+            {this.diffDate(this.state.wall.result_date)}
           </div>
         </div>
       </Fragment>

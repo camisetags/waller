@@ -28,6 +28,15 @@
 }
 
 .result-date {
+  position: relative;
   height: 100px;
-  width: 400px;
+  width: 239px;
+  top: -437px;
+  left: 345px;
+  text-align: center;
+  font-size: 18px;
+
+  .result-day {
+    font-size: 25px;
+  }
 }

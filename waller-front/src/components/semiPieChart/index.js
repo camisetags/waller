@@ -23,6 +23,10 @@ class Chart extends React.Component {
 
   static getDerivedStateFromProps(props, state) {
     if (props.users) {
+      const totalVotes = props.users.reduce((sum, curr) => sum + curr.votes);
+      const userVotesPercentage = props.users.map(
+        user => (user.votes * totalVotes) / 100
+      );
       return {
         ...state,
         data: {
@@ -30,7 +34,7 @@ class Chart extends React.Component {
           datasets: [
             {
               ...state.data.datasets[0],
-              data: props.users.map(user => user.votes)
+              data: userVotesPercentage
             }
           ]
         }

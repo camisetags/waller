@@ -1,5 +1,5 @@
 defmodule Waller.Wall.CacheLayer do
-  import Enum, only: [map: 2]
+  import Enum, only: [map: 2, reduce: 3]
 
   alias Waller.Wall.WallRepo
   alias Waller.Wall.Wall
@@ -125,10 +125,21 @@ defmodule Waller.Wall.CacheLayer do
   end
 
   defp sum_votes_mem_with_cache(cached_wall) do
+    total_votes =
+      cached_wall.users
+      |> reduce(0, fn curr, acc ->
+        curr.votes + acc +
+          votes_from_mem(%{
+            wall_id: cached_wall.id,
+            user_id: curr.id
+          })
+      end)
+
     %Wall{
       id: cached_wall.id,
       running: cached_wall.running,
       result_date: cached_wall.result_date,
+      total_votes: total_votes,
       users:
         cached_wall.users
         |> map(fn user ->
