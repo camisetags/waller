@@ -30,6 +30,7 @@ services:
       PGDATABASE: 'waller_database'
       PGPORT: 5432
       PGHOST: 'database'
+      PGTESTDATABASE: waller_test_database
       # Redis configs
       REDIS_HOST: 'redis'
       REDIS_PORT: 6979

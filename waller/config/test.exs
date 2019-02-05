@@ -12,7 +12,7 @@ config :logger, level: :warn
 config :waller, Waller.Repo,
   username: System.get_env("PGUSER") || "postgres",
   password: System.get_env("PGPASSWORD") || "postgres",
-  database: System.get_env("PGDATABASE") || "waller_test_database",
+  database: System.get_env("PGTESTDATABASE") || "waller_test_database",
   hostname: System.get_env("PGHOST") || "database",
   port: System.get_env("PGPORT") || 5432,
   pool_size: 10,
