@@ -142,6 +142,8 @@ mercado de front-end.
 
 # Configuração, build e testes
 
+Antes de mais nada, instale o docker na sua máquina pelo [link](https://docs.docker.com/install/). Logo em seguida siga os passos abaixo para configurar e rodar o projeto.
+
 ## Configure
 
 Rode os seguintes comandos para clonar, entrar no diretório do projeto, dar permissão ao arguivo e rodar o comando de configurações:

@@ -19,8 +19,6 @@ def main(args):
         help()
 
     if "configure" in args:
-        subprocess.call(["sudo", "chmod", "755", "get-docker.sh"])
-        subprocess.call(["sh", "get-docker.sh"])
         subprocess.call(["docker-compose", "build"])
 
     if "start":
