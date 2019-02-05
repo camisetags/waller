@@ -7,7 +7,15 @@ class Chart extends React.Component {
     options: {
       circumference: Math.PI * 1.2,
       cutoutPercentage: 80,
-      rotation: -1.1 * Math.PI
+      rotation: -1.1 * Math.PI,
+      legend: {
+        display: false
+      },
+      tooltips: {
+        callbacks: {
+          label: this.tooltipLabelCallback
+        }
+      }
     },
 
     data: {
@@ -22,7 +30,11 @@ class Chart extends React.Component {
   };
 
   static getDerivedStateFromProps(props, state) {
-    if (props.users) {
+    if (props.users && props.totalVotes) {
+      const userVotesPercentage = props.users.map(user => {
+        return Math.round((user.votes / props.totalVotes) * 100);
+      });
+
       return {
         ...state,
         data: {
@@ -30,7 +42,7 @@ class Chart extends React.Component {
           datasets: [
             {
               ...state.data.datasets[0],
-              data: props.users.map(user => user.votes)
+              data: userVotesPercentage
             }
           ]
         }
@@ -41,13 +53,20 @@ class Chart extends React.Component {
     };
   }
 
+  tooltipLabelCallback(tooltipItem, data) {
+    const dataIndex = tooltipItem.index;
+    const userPercentage = data.datasets[0].data[dataIndex];
+
+    return `${data.labels[dataIndex]}: ${userPercentage}%`;
+  }
+
   render() {
     return (
       <Doughnut
         data={this.state.data}
         options={this.state.options}
-        width={50}
-        height={20}
+        width={40}
+        height={15}
       />
     );
   }

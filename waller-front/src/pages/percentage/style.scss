@@ -17,6 +17,26 @@
 }
 
 .chart {
-  // top: 251px;
-  // position: absolute;
+  position: relative;
+  width: 94%;
+  top: -270px;
+  right: -3%;
+}
+
+.percentage-page {
+  height: 400px;
+}
+
+.result-date {
+  position: relative;
+  height: 100px;
+  width: 239px;
+  top: -437px;
+  left: 345px;
+  text-align: center;
+  font-size: 18px;
+
+  .result-day {
+    font-size: 25px;
+  }
 }

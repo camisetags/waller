@@ -30,6 +30,7 @@ defmodule Waller.Wall.Wall do
   schema "walls" do
     field :running, :boolean
     field :result_date, :utc_datetime
+    field :total_votes, :integer, virtual: true
 
     many_to_many(:users, User, join_through: UserWall)
 
