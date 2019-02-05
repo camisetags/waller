@@ -10,12 +10,20 @@ config :waller, WallerWeb.Endpoint,
 config :logger, level: :warn
 
 # Configure your database
+# config :waller, Waller.Repo,
+#   username: "postgres",
+#   password: "postgres",
+#   database: "waller_test",
+#   hostname: "databse",
+#   port: 54322,
+#   pool: Ecto.Adapters.SQL.Sandbox
 config :waller, Waller.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "waller_test",
-  hostname: "localhost",
-  port: 54322,
+  username: System.get_env("PGUSER") || "postgres",
+  password: System.get_env("PGPASSWORD") || "postgres",
+  database: System.get_env("PGDATABASE") || "waller_test_database",
+  hostname: System.get_env("PGHOST") || "database",
+  port: System.get_env("PGPORT") || 5432,
+  pool_size: 10,
   pool: Ecto.Adapters.SQL.Sandbox
 
 config :waller, :redix_pool,
