@@ -9,14 +9,6 @@ config :waller, WallerWeb.Endpoint,
 # Print only warnings and errors during test
 config :logger, level: :warn
 
-# Configure your database
-# config :waller, Waller.Repo,
-#   username: "postgres",
-#   password: "postgres",
-#   database: "waller_test",
-#   hostname: "databse",
-#   port: 54322,
-#   pool: Ecto.Adapters.SQL.Sandbox
 config :waller, Waller.Repo,
   username: System.get_env("PGUSER") || "postgres",
   password: System.get_env("PGPASSWORD") || "postgres",

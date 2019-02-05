@@ -167,16 +167,8 @@ Abra o navegador e entre no http://localhost:5000
 
 ## Testes
 
-Com elixir instalado na máquina ([MacOS ou Linux](https://elixir-lang.org/install.html)), use o seguinte comando
-para levantar apénas os containers do postgres e do redis:
+Com os containers rodando, execute o seguinte comando
 
 ```
-  docker-compose up -d database redis
-```
-
-Em seguida rode os comandos para instalar as dependências e rodar os testes:
-
-```
-  mix deps.get
-  mix tests
+  docker-compose exec phoenix mix tests
 ```
