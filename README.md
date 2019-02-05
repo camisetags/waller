@@ -116,7 +116,7 @@ dos votos por candidato até aquele momento.
 ## Linguagem Elixir
 
 Tomei a decisão de escolher elixir por ser uma linguagem de alta concorrência, tolerante a falhas
-e de simples entendimento (com sua sintax derivando de ruby).
+e de simples entendimento (com sua sintaxe derivando de ruby).
 
 ## Redis para cache e soma dos votos
 
@@ -133,10 +133,10 @@ problemas genéricos, achei uma boa escolha para parte de persistência dos dado
 
 ## React + bootstrap + sass
 
-Por React ser uma lib com muito suporte da comunidade, estár madura para desenvolvimento e ter padrões de fácil
+Por React ser uma lib com muito suporte da comunidade, estar madura para desenvolvimento e ter padrões de fácil
 entendimento, acaba se tornamdo uma das melhores opções no desenvolvimento front-end.
-Escolhi bootstrap como lib para auxílir no desenvolvimento da interface gráfica devido ao layout possuir elementos
-bem semelhante parecidos com os do bootrap.
+Escolhi bootstrap como lib para auxíliar no desenvolvimento da interface gráfica devido ao layout possuir elementos
+bem semelhante parecidos com os do bootstrap.
 A escolha do Sass se deu por ser uma forma muito mais fácil de entender css e ser de conhecimento por grande parte do
 mercado de front-end.
 
