@@ -1,6 +1,6 @@
-## Gabriel Seixas
+## Waller
 
-**Globo.com: coding challenge**
+**coding challenge**
 
 ====================
 
